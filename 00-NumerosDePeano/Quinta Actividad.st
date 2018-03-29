@@ -16,6 +16,11 @@ I class
 
 	^unNumeroDePeano next! !
 
+!I class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 10:13:05'!
+- unNumeroDePeano
+
+	self error: 'Al número uno no se le puede restar'! !
+
 !I class methodsFor: 'as yet unclassified' stamp: 'DS 3/22/2018 21:00:44'!
 next
 
@@ -25,6 +30,10 @@ next
 previous
 
 	self error: 'El número uno no tiene previo'! !
+
+!I class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:31:06'!
+reverseSubstraction: unNumeroDePeano
+	^ unNumeroDePeano previous.! !
 
 
 !classDefinition: #II category: #'Quinta Actividad'!
@@ -45,6 +54,10 @@ II class
 
 	^self previous + unNumeroDePeano next! !
 
+!II class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:31:06'!
+- unNumeroDePeano
+	^ unNumeroDePeano reverseSubstraction: self.! !
+
 !II class methodsFor: 'as yet unclassified' stamp: 'DS 3/22/2018 21:23:49'!
 next
 
@@ -59,7 +72,7 @@ next
 next: aNumber
 	next := aNumber! !
 
-!II class methodsFor: 'as yet unclassified' stamp: 'DS 3/22/2018 21:28:15'!
+!II class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 09:54:43'!
 previous
 
 	^previous! !
@@ -78,8 +91,12 @@ removeAllNext
 		next := nil.
 	]! !
 
+!II class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:31:06'!
+reverseSubstraction: unNumeroDePeano
+	^ self previous reverseSubstraction: unNumeroDePeano previous.! !
+
 II instVarNamed: 'next' put: III!
-II instVarNamed: 'previous' put: nil!
+II instVarNamed: 'previous' put: I!
 
 !classDefinition: #III category: #'Quinta Actividad'!
 DenotativeObject subclass: #III
@@ -94,12 +111,16 @@ DenotativeObject subclass: #III
 III class
 	instanceVariableNames: 'next previous'!
 
-!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:31'!
+!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 + unNumeroDePeano
 
 	^self previous + unNumeroDePeano next! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:31'!
+!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
+- unNumeroDePeano
+	^ unNumeroDePeano reverseSubstraction: self.! !
+
+!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 next
 
 	next ifNil:
@@ -109,21 +130,21 @@ next
 	].
 	^next.! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:31'!
+!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 next: aNumber
 	next := aNumber! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:31'!
+!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 previous
 
 	^previous! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:31'!
+!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 previous: unNumeroDePeano
 
 	previous := unNumeroDePeano! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:31'!
+!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 removeAllNext
 	next ifNotNil:
 	[
@@ -131,6 +152,10 @@ removeAllNext
 		next removeFromSystem.
 		next := nil.
 	]! !
+
+!III class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
+reverseSubstraction: unNumeroDePeano
+	^ self previous reverseSubstraction: unNumeroDePeano previous.! !
 
 III instVarNamed: 'next' put: IIII!
 III instVarNamed: 'previous' put: II!
@@ -148,12 +173,16 @@ DenotativeObject subclass: #IIII
 IIII class
 	instanceVariableNames: 'next previous'!
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:35'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 + unNumeroDePeano
 
 	^self previous + unNumeroDePeano next! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:35'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
+- unNumeroDePeano
+	^ unNumeroDePeano reverseSubstraction: self.! !
+
+!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 next
 
 	next ifNil:
@@ -163,21 +192,21 @@ next
 	].
 	^next.! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:35'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 next: aNumber
 	next := aNumber! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:35'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 previous
 
 	^previous! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:35'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 previous: unNumeroDePeano
 
 	previous := unNumeroDePeano! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/26/2018 20:53:35'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
 removeAllNext
 	next ifNotNil:
 	[
@@ -185,6 +214,10 @@ removeAllNext
 		next removeFromSystem.
 		next := nil.
 	]! !
+
+!IIII class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 11:34:06'!
+reverseSubstraction: unNumeroDePeano
+	^ self previous reverseSubstraction: unNumeroDePeano previous.! !
 
 IIII instVarNamed: 'next' put: nil!
 IIII instVarNamed: 'previous' put: III!
