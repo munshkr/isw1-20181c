@@ -21,16 +21,16 @@ I class
 
 	^unNumeroDePeano next! !
 
-!I class methodsFor: 'as yet unclassified' stamp: 'DS 3/29/2018 10:13:05'!
+!I class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:13'!
 - unNumeroDePeano
 
-	self error: 'Al número uno no se le puede restar'! !
+	self error: self descripcionDeErrorDeNumerosNegativosNoSoportados! !
 
-!I class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:48:28'!
+!I class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:26:54'!
 / unNumeroDePeano
 
 	(unNumeroDePeano  = I)
-	ifTrue: [^self] ifFalse: [self error: 'No se puede dividir un numero por otro mas grande'] ! !
+	ifTrue: [^self] ifFalse: [self error: self descripcionDeErrorDeNoSePuedeDividirPorUnNumeroMayor] ! !
 
 !I class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:48:36'!
 descripcionDeErrorDeNoSePuedeDividirPorUnNumeroMayor
@@ -148,32 +148,32 @@ DenotativeObject subclass: #III
 III class
 	instanceVariableNames: 'next previous'!
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 * unNumeroDePeano
 
 	^(self previous * unNumeroDePeano) + unNumeroDePeano! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 + unNumeroDePeano
 
 	^self previous + unNumeroDePeano next! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 - unNumeroDePeano
 	^ unNumeroDePeano reverseSubstraction: self.! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 / unNumeroDePeano
 
 	(self = unNumeroDePeano)
 	ifTrue: [^I] ifFalse: [^ I + ((self - unNumeroDePeano) / unNumeroDePeano )]! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 descripcionDeErrorDeNoSePuedeDividirPorUnNumeroMayor
 
 	^'No se puede dividir un numero por otro mas grande'! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 next
 
 	next ifNil:
@@ -183,21 +183,21 @@ next
 	].
 	^next.! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 next: aNumber
 	next := aNumber! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 previous
 
 	^previous! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 previous: unNumeroDePeano
 
 	previous := unNumeroDePeano! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 removeAllNext
 	next ifNotNil:
 	[
@@ -206,7 +206,7 @@ removeAllNext
 		next := nil.
 	]! !
 
-!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!III class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 reverseSubstraction: unNumeroDePeano
 	^ self previous reverseSubstraction: unNumeroDePeano previous.! !
 
@@ -226,32 +226,32 @@ DenotativeObject subclass: #IIII
 IIII class
 	instanceVariableNames: 'next previous'!
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 * unNumeroDePeano
 
 	^(self previous * unNumeroDePeano) + unNumeroDePeano! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 + unNumeroDePeano
 
 	^self previous + unNumeroDePeano next! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 - unNumeroDePeano
 	^ unNumeroDePeano reverseSubstraction: self.! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 / unNumeroDePeano
 
 	(self = unNumeroDePeano)
 	ifTrue: [^I] ifFalse: [^ I + ((self - unNumeroDePeano) / unNumeroDePeano )]! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 descripcionDeErrorDeNoSePuedeDividirPorUnNumeroMayor
 
 	^'No se puede dividir un numero por otro mas grande'! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 next
 
 	next ifNil:
@@ -261,21 +261,21 @@ next
 	].
 	^next.! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 next: aNumber
 	next := aNumber! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 previous
 
 	^previous! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 previous: unNumeroDePeano
 
 	previous := unNumeroDePeano! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 removeAllNext
 	next ifNotNil:
 	[
@@ -284,7 +284,7 @@ removeAllNext
 		next := nil.
 	]! !
 
-!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 3/29/2018 18:59:43'!
+!IIII class methodsFor: 'as yet unclassified' stamp: 'f.o. 4/1/2018 18:27:50'!
 reverseSubstraction: unNumeroDePeano
 	^ self previous reverseSubstraction: unNumeroDePeano previous.! !
 
