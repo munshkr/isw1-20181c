@@ -1,0 +1,54 @@
+Nuevamente deben hacer pasar los tests y deducir el patron de diseño a partir
+ver el comportamiento que se repite.
+
+Como veran, los tests que fallan es porque las consultas tardan mas de lo esperado
+Si se fijan el motivo, se debe a un sleep (o wait depediendo del leng.), no puden
+sacarlos ni modificarlos!
+En particular, las consultas que fallan son dos consultas nuevas que son una
+combinacion de otras consultas (por ej. allInsvestmentInformacion, etc).
+Por lo tanto la solucion que hace pasar los tests tiene que ejecutar en paralelo
+las consultas que forman parte de las consultas compuestas.
+Una vez que hagan pasar los tests usando esa solucion, vean en codigo repetido y
+saquenlo y ahi aparecera el patron.
+
+Respecto a correr algo en paralelo, les paso codigo ejemplo para cada leng:
+
+Smalltalk:
+[ ... ] fork <-- crea un proceso nuevo que ejecuta en paralelo el bloque.
+Para esperar por algo que esta corriendo en paralelo tienen que usar un
+semaforo. Para ello tienen:
+readySemaphore := Semaphore new.  <-- crea el semaforo
+readySemaphor signal. <--- indica que el semaforo se prendio
+readySemaphore wait.  <--- espero por que el semaforo se prenda
+
+Ruby:
+@thread = ::Thread.new { .... }  <-- crear un thead y evalua el closure en dicha thread
+@thread.join  <--- pausa la thread actual hasta que @thread termine
+
+Java:
+thread = new Thread(new Runnable() {
+
+  @Override
+  public void run() {
+    ....
+  }
+});  <-- crea una thread para enviar el mensaje run al runnable pasado como colaborador
+thread.start(); <-- inicia la ejecucion de la thread
+
+thread.join(); <--- pausa la thread actual hasta que thread termine
+
+C#:
+thread = new Thread(new ThreadStart(run)); <-- se crea thread indicando que debe enviar mensaje run
+thread.Start();  <-- inicializa la ejecucion de la thread
+
+public void run()... <-- mensaje a implementar que sera ejecutado en la nueva thread
+
+thread.Join(); <--- pausa la thread actual hasta que thread termine
+
+Python:
+thread = Thread(None,aLambda) <-- crea una thread que evaluara aLambda
+thread.start() <-- incia la ejecucion de la thread
+thread.join() <--- pausa la thread actual hasta que thread termine
+
+JavaScript:
+Este ejercicio no puede ser resuelto en JavaScript

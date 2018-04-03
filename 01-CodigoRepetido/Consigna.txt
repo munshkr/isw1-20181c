@@ -1,0 +1,11 @@
+Este ejercicio tiene por objetivo que saquen el código repetido que existe entre
+el test01 y test02 y también entre el test03 y test04.
+
+Los tests provistos ya funcionan, simplemente hay que sacar el código repetido
+y los tests deben seguir funcionando.
+
+No se puede modificar las clases provistas, solo los tests y no se puede
+modificar lo que verifican los tests. O sea, solo se puede hacer un cambio de
+diseño de tal manera que siga testeando lo mismo, que la funcionalidad sea la
+misma, pero que no haya codigo repetido
+
