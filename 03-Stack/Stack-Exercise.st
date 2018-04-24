@@ -139,49 +139,50 @@ test10CanNotTopWhenThereAreNoObjectsInTheStack
 
 !classDefinition: #OOStack category: #'Stack-Exercise'!
 Object subclass: #OOStack
-	instanceVariableNames: 'collection'
+	instanceVariableNames: 'topNode'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'testing' stamp: 'DS 4/23/2018 23:55:29'!
+!OOStack methodsFor: 'testing' stamp: 'DS 4/24/2018 19:23:15'!
 isEmpty
 
-	^collection last isEmpty ! !
+	^ topNode isEmpty.! !
 
 
-!OOStack methodsFor: 'adding' stamp: 'DS 4/23/2018 23:52:10'!
+!OOStack methodsFor: 'adding' stamp: 'DS 4/24/2018 19:31:47'!
 push: anObject
-	
 	| aNode |
-	
-	aNode _ ValidStackNode new: anObject.
-	collection addLast: aNode! !
+	aNode _ ValueStackNode
+		with: anObject
+		after: topNode.
+	topNode _ aNode.! !
 
 
-!OOStack methodsFor: 'initialization' stamp: 'DS 4/23/2018 23:55:23'!
+!OOStack methodsFor: 'initialization' stamp: 'DS 4/24/2018 19:31:28'!
 initialize
-
-	collection _ OrderedCollection new.
-	collection addLast: EmptyStackNode new! !
+	topNode _ NullStackNode new.! !
 
 
-!OOStack methodsFor: 'removing' stamp: 'DS 4/23/2018 23:55:39'!
+!OOStack methodsFor: 'removing' stamp: 'DS 4/24/2018 19:23:20'!
 pop
 
-	collection last onRemove.
-	^collection removeLast value! !
+	| lastNode |
+	
+	lastNode _ topNode.
+	topNode _ lastNode next.
+	^ lastNode value.! !
 
 
-!OOStack methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:55:45'!
+!OOStack methodsFor: 'accessing' stamp: 'DS 4/24/2018 19:23:36'!
 size
 
-	^collection size - 1! !
+	^ topNode size.! !
 
-!OOStack methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:55:50'!
+!OOStack methodsFor: 'accessing' stamp: 'DS 4/24/2018 19:23:40'!
 top
 
-	^collection last value! !
+	^ topNode value.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -207,6 +208,16 @@ Object subclass: #StackNode
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
+!StackNode methodsFor: 'accessing' stamp: 'DS 4/24/2018 19:37:04'!
+next
+
+	self subclassResponsibility ! !
+
+!StackNode methodsFor: 'accessing' stamp: 'DS 4/24/2018 19:35:16'!
+size
+
+	self subclassResponsibility ! !
+
 !StackNode methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:35:57'!
 value
 
@@ -218,85 +229,89 @@ isEmpty
 
 	self subclassResponsibility ! !
 
-
-!StackNode methodsFor: 'private' stamp: 'DS 4/23/2018 23:45:10'!
-onRemove
-
-	self subclassResponsibility ! !
-
 
-!classDefinition: #EmptyStackNode category: #'Stack-Exercise'!
-StackNode subclass: #EmptyStackNode
+!classDefinition: #NullStackNode category: #'Stack-Exercise'!
+StackNode subclass: #NullStackNode
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!EmptyStackNode methodsFor: 'testing' stamp: 'DS 4/23/2018 23:39:32'!
+!NullStackNode methodsFor: 'testing' stamp: 'DS 4/23/2018 23:39:32'!
 isEmpty
 
 	^true! !
 
 
-!EmptyStackNode methodsFor: 'private' stamp: 'DS 4/23/2018 23:46:01'!
-onRemove
+!NullStackNode methodsFor: 'accessing' stamp: 'DS 4/24/2018 19:36:45'!
+next
 
 	self error: self class stackEmptyErrorDescription! !
 
+!NullStackNode methodsFor: 'accessing' stamp: 'DS 4/24/2018 19:35:27'!
+size
 
-!EmptyStackNode methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:49:28'!
+	^0! !
+
+!NullStackNode methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:49:28'!
 value
 
 	self error: self class stackEmptyErrorDescription! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'EmptyStackNode class' category: #'Stack-Exercise'!
-EmptyStackNode class
+!classDefinition: 'NullStackNode class' category: #'Stack-Exercise'!
+NullStackNode class
 	instanceVariableNames: ''!
 
-!EmptyStackNode class methodsFor: 'error descriptions' stamp: 'DS 4/23/2018 23:46:17'!
+!NullStackNode class methodsFor: 'error descriptions' stamp: 'DS 4/23/2018 23:46:17'!
 stackEmptyErrorDescription
 	
 	^ 'Stack is empty'! !
 
 
-!classDefinition: #ValidStackNode category: #'Stack-Exercise'!
-StackNode subclass: #ValidStackNode
-	instanceVariableNames: 'value'
+!classDefinition: #ValueStackNode category: #'Stack-Exercise'!
+StackNode subclass: #ValueStackNode
+	instanceVariableNames: 'next value'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!ValidStackNode methodsFor: 'private' stamp: 'DS 4/23/2018 23:55:10'!
-onRemove
-
-	'do nothing'! !
-
-!ValidStackNode methodsFor: 'private' stamp: 'DS 4/23/2018 23:52:56'!
-setValue: anObject
-
-	value _ anObject! !
-
-
-!ValidStackNode methodsFor: 'testing' stamp: 'DS 4/23/2018 23:39:44'!
+!ValueStackNode methodsFor: 'testing' stamp: 'DS 4/23/2018 23:39:44'!
 isEmpty
 
 	^false! !
 
+!ValueStackNode methodsFor: 'testing' stamp: 'DS 4/24/2018 19:35:52'!
+size
 
-!ValidStackNode methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:54:17'!
+	^1 + next size! !
+
+
+!ValueStackNode methodsFor: 'accessing' stamp: 'DS 4/24/2018 19:26:43'!
+next
+
+	^next! !
+
+!ValueStackNode methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:54:17'!
 value
 
 	^value! !
 
+
+!ValueStackNode methodsFor: 'initialization' stamp: 'DS 4/24/2018 19:24:48'!
+setValue: anObject after: aNode
+
+	value _ anObject.
+	next _ aNode! !
+
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
-!classDefinition: 'ValidStackNode class' category: #'Stack-Exercise'!
-ValidStackNode class
+!classDefinition: 'ValueStackNode class' category: #'Stack-Exercise'!
+ValueStackNode class
 	instanceVariableNames: ''!
 
-!ValidStackNode class methodsFor: 'as yet unclassified' stamp: 'DS 4/23/2018 23:52:33'!
-new: anObject
+!ValueStackNode class methodsFor: 'instance creation' stamp: 'DS 4/24/2018 19:18:28'!
+with: anObject after: aNode
 
-	^super new setValue: anObject! !
+	^super new setValue: anObject after: aNode! !
