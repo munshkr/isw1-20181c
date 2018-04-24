@@ -144,37 +144,44 @@ Object subclass: #OOStack
 	poolDictionaries: ''
 	category: 'Stack-Exercise'!
 
-!OOStack methodsFor: 'testing' stamp: 'DS 4/23/2018 22:34:47'!
+!OOStack methodsFor: 'testing' stamp: 'DS 4/23/2018 23:55:29'!
 isEmpty
-	^collection isEmpty ! !
+
+	^collection last isEmpty ! !
 
 
-!OOStack methodsFor: 'adding' stamp: 'DS 4/23/2018 22:34:58'!
+!OOStack methodsFor: 'adding' stamp: 'DS 4/23/2018 23:52:10'!
 push: anObject
-	collection addLast: anObject! !
+	
+	| aNode |
+	
+	aNode _ ValidStackNode new: anObject.
+	collection addLast: aNode! !
 
 
-!OOStack methodsFor: 'initialization' stamp: 'DS 4/23/2018 22:34:35'!
+!OOStack methodsFor: 'initialization' stamp: 'DS 4/23/2018 23:55:23'!
 initialize
-	collection _ OrderedCollection new! !
+
+	collection _ OrderedCollection new.
+	collection addLast: EmptyStackNode new! !
 
 
-!OOStack methodsFor: 'removing' stamp: 'DS 4/23/2018 22:39:46'!
+!OOStack methodsFor: 'removing' stamp: 'DS 4/23/2018 23:55:39'!
 pop
-	collection isEmpty
-		ifTrue: [ self error: self class stackEmptyErrorDescription ]
-		ifFalse: [ ^collection removeLast ]! !
+
+	collection last onRemove.
+	^collection removeLast value! !
 
 
-!OOStack methodsFor: 'accessing' stamp: 'DS 4/23/2018 22:36:24'!
+!OOStack methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:55:45'!
 size
-	^collection size! !
 
-!OOStack methodsFor: 'accessing' stamp: 'DS 4/23/2018 22:39:56'!
+	^collection size - 1! !
+
+!OOStack methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:55:50'!
 top
-	collection isEmpty
-		ifTrue: [ self error: self class stackEmptyErrorDescription ]
-		ifFalse: [ ^collection last ]! !
+
+	^collection last value! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -191,3 +198,105 @@ stackEmptyErrorDescription
 !OOStack class methodsFor: 'instance creation' stamp: 'DS 4/23/2018 22:31:21'!
 new
 	^super new initialize! !
+
+
+!classDefinition: #StackNode category: #'Stack-Exercise'!
+Object subclass: #StackNode
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!StackNode methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:35:57'!
+value
+
+	self subclassResponsibility ! !
+
+
+!StackNode methodsFor: 'testing' stamp: 'DS 4/23/2018 23:39:06'!
+isEmpty
+
+	self subclassResponsibility ! !
+
+
+!StackNode methodsFor: 'private' stamp: 'DS 4/23/2018 23:45:10'!
+onRemove
+
+	self subclassResponsibility ! !
+
+
+!classDefinition: #EmptyStackNode category: #'Stack-Exercise'!
+StackNode subclass: #EmptyStackNode
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!EmptyStackNode methodsFor: 'testing' stamp: 'DS 4/23/2018 23:39:32'!
+isEmpty
+
+	^true! !
+
+
+!EmptyStackNode methodsFor: 'private' stamp: 'DS 4/23/2018 23:46:01'!
+onRemove
+
+	self error: self class stackEmptyErrorDescription! !
+
+
+!EmptyStackNode methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:49:28'!
+value
+
+	self error: self class stackEmptyErrorDescription! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'EmptyStackNode class' category: #'Stack-Exercise'!
+EmptyStackNode class
+	instanceVariableNames: ''!
+
+!EmptyStackNode class methodsFor: 'error descriptions' stamp: 'DS 4/23/2018 23:46:17'!
+stackEmptyErrorDescription
+	
+	^ 'Stack is empty'! !
+
+
+!classDefinition: #ValidStackNode category: #'Stack-Exercise'!
+StackNode subclass: #ValidStackNode
+	instanceVariableNames: 'value'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Stack-Exercise'!
+
+!ValidStackNode methodsFor: 'private' stamp: 'DS 4/23/2018 23:55:10'!
+onRemove
+
+	'do nothing'! !
+
+!ValidStackNode methodsFor: 'private' stamp: 'DS 4/23/2018 23:52:56'!
+setValue: anObject
+
+	value _ anObject! !
+
+
+!ValidStackNode methodsFor: 'testing' stamp: 'DS 4/23/2018 23:39:44'!
+isEmpty
+
+	^false! !
+
+
+!ValidStackNode methodsFor: 'accessing' stamp: 'DS 4/23/2018 23:54:17'!
+value
+
+	^value! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'ValidStackNode class' category: #'Stack-Exercise'!
+ValidStackNode class
+	instanceVariableNames: ''!
+
+!ValidStackNode class methodsFor: 'as yet unclassified' stamp: 'DS 4/23/2018 23:52:33'!
+new: anObject
+
+	^super new setValue: anObject! !
