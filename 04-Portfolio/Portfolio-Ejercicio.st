@@ -217,7 +217,7 @@ test16PortfolioKnowsItsAccountsTransactions
 	self assert: 1= (composedPortfolio transactionsOf:account1) size .
 	self assert: ((composedPortfolio transactionsOf: account1) includes:deposit1).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'HernanWilkinson 9/12/2011 13:23'!
+!PortfolioTest methodsFor: 'tests' stamp: 'f.o. 5/8/2018 20:23:56'!
 test17PortfolioKnowsItsPortfoliosTransactions 
 
 	| account1 account2 account3 complexPortfolio composedPortfolio deposit1 deposit2 |
@@ -232,7 +232,7 @@ test17PortfolioKnowsItsPortfoliosTransactions
 	deposit2 := Deposit register: 100 on: account2.
 	Deposit register: 100 on: account3.
 		
-	self assert: 2 = (composedPortfolio transactionsOf:complexPortfolio) size .
+	self assert: 2 equals: (composedPortfolio transactionsOf:complexPortfolio) size .
 	self assert: ((composedPortfolio transactionsOf:complexPortfolio) includes:deposit1).
 	self assert: ((composedPortfolio transactionsOf:complexPortfolio) includes:deposit2).
 ! !
@@ -438,9 +438,9 @@ transactions
 			allTransactions addAll: (anAccount transactions).
 			allTransactions ]! !
 
-!Portfolio methodsFor: 'transactions' stamp: 'DS 5/7/2018 21:54:33'!
+!Portfolio methodsFor: 'transactions' stamp: 'f.o. 5/8/2018 21:06:36'!
 transactionsOf: anAccount 
-
+"
 	| managedAccount |
 	
 	managedAccount _ summarizingAccounts
@@ -449,7 +449,13 @@ transactionsOf: anAccount
 		
 	^managedAccount = anAccount
 		ifTrue: [managedAccount transactions]
-		ifFalse: [managedAccount transactionsOf: anAccount]! !
+		ifFalse: [managedAccount transactionsOf: anAccount]
+"
+
+self assert: [self manages: anAccount] description: 
+	[self error: Portfolio accountNotManagedMessageDescription].
+
+	^ anAccount transactions.! !
 
 
 !Portfolio methodsFor: 'initialization' stamp: 'DS 5/7/2018 20:56:17'!
@@ -462,11 +468,27 @@ initializeWith: aCollectionOfAccounts
 Portfolio class
 	instanceVariableNames: ''!
 
-!Portfolio class methodsFor: 'instance creation' stamp: 'DS 5/7/2018 20:47:49'!
+!Portfolio class methodsFor: 'instance creation' stamp: 'f.o. 5/8/2018 21:51:30'!
+accountAlreadyManagedErrorMessage
+	
+	^'El Portfolio seleccionado ya maneja esa cuenta'.! !
+
+!Portfolio class methodsFor: 'instance creation' stamp: 'f.o. 5/8/2018 21:07:12'!
+accountNotManagedMessageDescription
+	
+	^'El Portfolio seleccionado no maneja esa cuenta'.! !
+
+!Portfolio class methodsFor: 'instance creation' stamp: 'f.o. 5/8/2018 21:54:08'!
 with: anAccount1 with: anAccount2
 
 	| aCollectionOfAccounts |
 
+	self assert: [(anAccount1 = anAccount2) not] description: 
+	[self error: Portfolio accountAlreadyManagedErrorMessage ].
+	
+	self assert: [((anAccount1 manages: anAccount2) or: (anAccount2 manages: anAccount1)) not] description: 
+	[self error: Portfolio accountAlreadyManagedErrorMessage ].
+	
 	aCollectionOfAccounts _ OrderedCollection with: anAccount1 with: anAccount2.
 	^super new initializeWith: aCollectionOfAccounts
 	! !
