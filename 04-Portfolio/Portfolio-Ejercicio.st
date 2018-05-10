@@ -429,14 +429,12 @@ registers: aTransaction
 	^summarizingAccounts anySatisfy: [:anAccount | anAccount registers: aTransaction]! !
 
 
-!Portfolio methodsFor: 'transactions' stamp: 'DS 5/7/2018 21:33:04'!
+!Portfolio methodsFor: 'transactions' stamp: 'DS 5/9/2018 08:42:02'!
 transactions 
 
 	^summarizingAccounts
 		inject: OrderedCollection new
-		into: [ :allTransactions :anAccount |
-			allTransactions addAll: (anAccount transactions).
-			allTransactions ]! !
+		into: [ :allTransactions :anAccount | allTransactions addAll: (anAccount transactions); yourself ]! !
 
 !Portfolio methodsFor: 'transactions' stamp: 'f.o. 5/8/2018 21:06:36'!
 transactionsOf: anAccount 
@@ -478,24 +476,32 @@ accountNotManagedMessageDescription
 	
 	^'El Portfolio seleccionado no maneja esa cuenta'.! !
 
-!Portfolio class methodsFor: 'instance creation' stamp: 'f.o. 5/8/2018 21:54:08'!
+!Portfolio class methodsFor: 'instance creation' stamp: 'DS 5/10/2018 14:04:04'!
 with: anAccount1 with: anAccount2
 
 	| aCollectionOfAccounts |
-
-	self assert: [(anAccount1 = anAccount2) not] description: 
-	[self error: Portfolio accountAlreadyManagedErrorMessage ].
-	
-	self assert: [((anAccount1 manages: anAccount2) or: (anAccount2 manages: anAccount1)) not] description: 
-	[self error: Portfolio accountAlreadyManagedErrorMessage ].
 	
 	aCollectionOfAccounts _ OrderedCollection with: anAccount1 with: anAccount2.
-	^super new initializeWith: aCollectionOfAccounts
-	! !
+	^self withAll: aCollectionOfAccounts! !
 
-!Portfolio class methodsFor: 'instance creation' stamp: 'DS 5/7/2018 20:47:53'!
+!Portfolio class methodsFor: 'instance creation' stamp: 'DS 5/10/2018 14:26:36'!
 withAll: aCollectionOfAccounts
 
+	| aSetOfAccounts |
+	
+	"No puede haber cuentas repetidas"
+	aSetOfAccounts _ Set withAll: aCollectionOfAccounts.
+	self
+		assert: [ aSetOfAccounts size = aCollectionOfAccounts size ]
+		description: [ self error: self accountAlreadyManagedErrorMessage ].
+	
+	"Para todo par de cuentas, si son distintas entonces una no puede manejar a la otra"
+	self
+		assert: [ aCollectionOfAccounts allSatisfy: [ :anAccount1 |
+				aCollectionOfAccounts allSatisfy: [ :anAccount2 |
+					(anAccount1 = anAccount2) or: ((anAccount1 manages: anAccount2) not)]]]
+		description: [ self error: self accountAlreadyManagedErrorMessage ].
+		
 	^super new initializeWith: aCollectionOfAccounts! !
 
 
