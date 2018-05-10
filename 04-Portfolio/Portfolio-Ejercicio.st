@@ -436,22 +436,12 @@ transactions
 		inject: OrderedCollection new
 		into: [ :allTransactions :anAccount | allTransactions addAll: (anAccount transactions); yourself ]! !
 
-!Portfolio methodsFor: 'transactions' stamp: 'f.o. 5/8/2018 21:06:36'!
+!Portfolio methodsFor: 'transactions' stamp: 'DS 5/10/2018 14:28:46'!
 transactionsOf: anAccount 
-"
-	| managedAccount |
-	
-	managedAccount _ summarizingAccounts
-		detect: [:aSummarizingAccount |	aSummarizingAccount manages: anAccount ]
-		ifNone: [^OrderedCollection new].
-		
-	^managedAccount = anAccount
-		ifTrue: [managedAccount transactions]
-		ifFalse: [managedAccount transactionsOf: anAccount]
-"
 
-self assert: [self manages: anAccount] description: 
-	[self error: Portfolio accountNotManagedMessageDescription].
+	self
+		assert: [ self manages: anAccount ]
+		description: [ self error: Portfolio accountNotManagedMessageDescription] .
 
 	^ anAccount transactions.! !
 
