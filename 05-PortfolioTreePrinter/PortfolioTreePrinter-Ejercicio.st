@@ -451,7 +451,7 @@ test27ShouldBeAbleToBeQueryTransferNetWithCertificateOfDeposit
 	self assert: 150 = (self accountTransferNetOf: fromAccount).
 	self assert: -150 = (self accountTransferNetOf: toAccount).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'HernanWilkinson 9/26/2011 16:29'!
+!PortfolioTest methodsFor: 'tests' stamp: 'f.o. 5/16/2018 12:07:47'!
 test28PortfolioTreePrinterPrintsTheCompositeInDepthFirstOrder
 
 	| account1 account2 account3 complexPortfolio composedPortfolio accountNames lines |
@@ -464,7 +464,7 @@ test28PortfolioTreePrinterPrintsTheCompositeInDepthFirstOrder
 
 	accountNames := Dictionary new.
 	accountNames at: composedPortfolio put: 'composedPortfolio'.
-	accountNames at: complexPortfolio put: 'complexPortfolio'.
+	accountNames at: complexPortfolio put: ' complexPortfolio'.
 	accountNames at: account1 put: 'account1'.
 	accountNames at: account2 put: 'account2'.
 	accountNames at: account3 put: 'account3'.
@@ -473,12 +473,12 @@ test28PortfolioTreePrinterPrintsTheCompositeInDepthFirstOrder
 		
 	self assert: 5 = lines size.
 	self assert: 'composedPortfolio' = (lines at: 1).
-	self assert: ' complexPortfolio' = (lines at: 2).
-	self assert: '  account1' = (lines at: 3).
+	self assert: ' complexPortfolio' equals: (lines at: 2).
+	self assert: '  account1' equals: (lines at: 3).
 	self assert: '  account2' = (lines at: 4).
 	self assert: ' account3' = (lines at: 5).! !
 
-!PortfolioTest methodsFor: 'tests' stamp: 'HernanWilkinson 9/26/2011 16:30'!
+!PortfolioTest methodsFor: 'tests' stamp: 'f.o. 5/16/2018 12:00:05'!
 test29ReversePortfolioTreePrinterPrintsTheCompositeStartingFromTheLeaves
 
 	| account1 account2 account3 complexPortfolio composedPortfolio accountNames lines |
@@ -501,7 +501,7 @@ test29ReversePortfolioTreePrinterPrintsTheCompositeStartingFromTheLeaves
 	self assert: ' account3' = (lines at: 1).
 	self assert: '  account2' = (lines at: 2).
 	self assert: '  account1' = (lines at: 3).
-	self assert: ' complexPortfolio' = (lines at: 4).
+	self assert: ' complexPortfolio' equals: (lines at: 4).
 	self assert: 'composedPortfolio' = (lines at: 5).
 	! !
 
@@ -526,15 +526,15 @@ investmentNetOf: aReceptiveAccount
 	
 	^ (InvestmentNet of: aReceptiveAccount) value! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'HernanWilkinson 9/6/2016 19:43'!
+!PortfolioTest methodsFor: 'test support' stamp: 'f.o. 5/16/2018 11:02:23'!
 portofolioTreeOf: aPortfolio namingAccountWith: aDictionary 
 	
-	self shouldBeImplemented ! !
+	^aPortfolio printPortfolioTreeWithNames: aDictionary.! !
 
-!PortfolioTest methodsFor: 'test support' stamp: 'HernanWilkinson 9/6/2016 19:43'!
+!PortfolioTest methodsFor: 'test support' stamp: 'f.o. 5/16/2018 11:59:32'!
 reversePortofolioTreeOf: aPortfolio namingAccountWith: aDictionary 
 	
-	self shouldBeImplemented ! !
+	^aPortfolio printReversePortfolioTreeWithNames: aDictionary.! !
 
 
 !classDefinition: #AccountSummary category: #'PortfolioTreePrinter-Ejercicio'!
@@ -1054,6 +1054,32 @@ balance
 	^ accounts sum: [ :account | account balance ]
 ! !
 
+!Portfolio methodsFor: 'transactions' stamp: 'f.o. 5/16/2018 12:08:28'!
+printAccountWithName: aDictionary over: aCollection withPrefix: aPrefix
+	| print |
+	print := aCollection.
+	print add: (aDictionary at: self).
+	accounts from: 1 to: accounts size do: [:anAccount | anAccount printAccountWithName: aDictionary over: print withPrefix: (aPrefix append:  ' ')].
+	^print! !
+
+!Portfolio methodsFor: 'transactions' stamp: 'f.o. 5/16/2018 11:16:19'!
+printPortfolioTreeWithNames: aDictionary
+
+	^ self printAccountWithName: aDictionary over: (OrderedCollection new) withPrefix: ''.! !
+
+!Portfolio methodsFor: 'transactions' stamp: 'f.o. 5/16/2018 12:08:39'!
+printReverseAccountWithName: aDictionary over: aCollection withPrefix: aPrefix
+	| print |
+	print := aCollection.
+	accounts reverseDo: [:anAccount | anAccount printReverseAccountWithName: aDictionary over: print withPrefix: (aPrefix append:  ' ')].
+	print add:(aPrefix append:  (aDictionary at: self)).
+	^print! !
+
+!Portfolio methodsFor: 'transactions' stamp: 'f.o. 5/16/2018 11:58:36'!
+printReversePortfolioTreeWithNames: aDictionary
+
+	^ self printReverseAccountWithName: aDictionary over: OrderedCollection new withPrefix: ''.! !
+
 !Portfolio methodsFor: 'transactions' stamp: 'HAW 9/25/2017 19:40:20'!
 transactions 
 
@@ -1149,6 +1175,20 @@ initialize
 balance
 
 	^ transactions inject: 0 into: [ :balance :transaction | balance + transaction signedValue ]! !
+
+!ReceptiveAccount methodsFor: 'transactions' stamp: 'f.o. 5/16/2018 11:22:33'!
+printAccountWithName: aDictionary over: aCollection withPrefix: aPrefix
+	| print |
+	print := aCollection.
+	print add: (aPrefix append: (aDictionary at: self)).
+	^print ! !
+
+!ReceptiveAccount methodsFor: 'transactions' stamp: 'f.o. 5/16/2018 11:56:31'!
+printReverseAccountWithName: aDictionary over: aCollection withPrefix: aPrefix
+	| print |
+	print := aCollection.
+	print add: (aPrefix append: (aDictionary at: self)).
+	^print ! !
 
 !ReceptiveAccount methodsFor: 'transactions' stamp: 'HernanWilkinson 7/13/2011 18:37'!
 register: aTransaction
