@@ -550,7 +550,7 @@ initializeOf: aReceptiveAccount
 	account _ aReceptiveAccount! !
 
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:32:14'!
+!AccountSummary methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:32:14'!
 certificateOfDeposit: aCertificate
 
 	| percentage |
@@ -560,22 +560,22 @@ certificateOfDeposit: aCertificate
 	^ 'Plazo fijo por ', aCertificate value asString, ' durante ', aCertificate numberOfDays asString,
 		' dias a una tna de ', percentage asString, '%'! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:37:53'!
+!AccountSummary methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:37:53'!
 deposit: aDeposit
 
 	^'Deposito por ', aDeposit value asString! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:39:34'!
+!AccountSummary methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:39:34'!
 transferDeposit: aTransferDeposit
 
 	^ 'Transferencia por ', aTransferDeposit signedValue asString! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:39:51'!
+!AccountSummary methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:39:51'!
 transferWithdraw: aTransferWithdraw
 
 	^ 'Transferencia por ', aTransferWithdraw signedValue asString! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:49:11'!
+!AccountSummary methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:49:11'!
 value
 	^ account transactions
 		inject: OrderedCollection new
@@ -584,7 +584,7 @@ value
 				addLast: (aTransaction forQuery: self);
 				yourself ].! !
 
-!AccountSummary methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:40:12'!
+!AccountSummary methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:40:12'!
 withdraw: aWithdraw
 
 	^'Extraccion por ', aWithdraw value asString! !
@@ -899,32 +899,32 @@ initializeOf: aReceptiveAccount
 	account _ aReceptiveAccount! !
 
 
-!InvestmentEarnings methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:07:35'!
+!InvestmentEarnings methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:07:35'!
 certificateOfDeposit: aCertificate
 
 	^ aCertificate value * (aCertificate tna / 360) * aCertificate numberOfDays! !
 
-!InvestmentEarnings methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:00:45'!
+!InvestmentEarnings methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:00:45'!
 deposit: aDeposit
 
 	^ 0! !
 
-!InvestmentEarnings methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:07:43'!
+!InvestmentEarnings methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:07:43'!
 transferDeposit: aTransferDeposit
 
 	^ 0! !
 
-!InvestmentEarnings methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:07:46'!
+!InvestmentEarnings methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:07:46'!
 transferWithdraw: aTransferWithdraw
 
 	^ 0! !
 
-!InvestmentEarnings methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:00:45'!
+!InvestmentEarnings methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:00:45'!
 value
 
 	^ account transactions sum: [ :aTransaction | aTransaction forQuery: self ]! !
 
-!InvestmentEarnings methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:00:45'!
+!InvestmentEarnings methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:00:45'!
 withdraw: aWithdraw
 
 	^ 0! !
@@ -954,32 +954,32 @@ initializeOf: aReceptiveAccount
 	account _ aReceptiveAccount! !
 
 
-!InvestmentNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:04:25'!
+!InvestmentNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:04:25'!
 certificateOfDeposit: aCertificate
 
 	^ aCertificate value! !
 
-!InvestmentNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:00:35'!
+!InvestmentNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:00:35'!
 deposit: aDeposit
 
 	^ 0! !
 
-!InvestmentNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:04:35'!
+!InvestmentNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:04:35'!
 transferDeposit: aTransferDeposit
 
 	^ 0! !
 
-!InvestmentNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:04:39'!
+!InvestmentNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:04:39'!
 transferWithdraw: aTransferWithdraw
 
 	^ 0! !
 
-!InvestmentNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:00:35'!
+!InvestmentNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:00:35'!
 value
 
 	^ account transactions sum: [ :aTransaction | aTransaction forQuery: self ]! !
 
-!InvestmentNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 19:00:35'!
+!InvestmentNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 19:00:35'!
 withdraw: aWithdraw
 
 	^ 0! !
@@ -1286,32 +1286,32 @@ initializeOf: aReceptiveAccount
 	account _ aReceptiveAccount! !
 
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:57:26'!
+!TransferNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:57:26'!
 certificateOfDeposit: aCertificate
 
 	^ 0! !
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:57:21'!
+!TransferNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:57:21'!
 deposit: aDeposit
 
 	^ 0! !
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:56:32'!
+!TransferNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:56:32'!
 transferDeposit: aTransferDeposit
 
 	^ aTransferDeposit signedValue.! !
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:56:47'!
+!TransferNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:56:47'!
 transferWithdraw: aTransferWithdraw
 
 	^ aTransferWithdraw signedValue.! !
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:54:22'!
+!TransferNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:54:22'!
 value
 
 	^ account transactions sum: [ :aTransaction | aTransaction forQuery: self ]! !
 
-!TransferNet methodsFor: 'as yet unclassified' stamp: 'DS 5/14/2018 18:57:16'!
+!TransferNet methodsFor: 'evaluating' stamp: 'DS 5/14/2018 18:57:16'!
 withdraw: aWithdraw
 
 	^ 0! !
