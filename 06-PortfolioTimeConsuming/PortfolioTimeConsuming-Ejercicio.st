@@ -570,19 +570,19 @@ initializeFor: aReceptiveAccount
 	
 	account := aReceptiveAccount ! !
 
-!AccountSummaryWithAllInvestmentInformation methodsFor: 'as yet unclassified' stamp: 'DS 5/21/2018 19:50:05'!
+!AccountSummaryWithAllInvestmentInformation methodsFor: 'as yet unclassified' stamp: 'DS 5/23/2018 19:51:30'!
 lines 
 
-	| lines investmentEarnings semaphore investmentEarningsLine |
+	| lines investmentEarnings promise investmentEarningsLine |
 	
 	investmentEarnings := InvestmentNetVisitor for: account.
 
-	semaphore _ Semaphore new.	
-	[ lines _ (AccountSummaryWithInvestmentEarnings for: account) lines.
-	  semaphore signal ] fork.
+	promise _ Promise
+		do: [ lines _ (AccountSummaryWithInvestmentEarnings for: account) lines ].
+
 	investmentEarningsLine _ 'Inversiones por ', investmentEarnings value printString.
 	
-	semaphore wait.
+	promise wait.
 	lines add: investmentEarningsLine.
 	
 	 ^ lines! !
@@ -611,19 +611,19 @@ initializeFor: aReceptiveAccount
 	
 	account := aReceptiveAccount ! !
 
-!AccountSummaryWithInvestmentEarnings methodsFor: 'as yet unclassified' stamp: 'DS 5/21/2018 19:50:13'!
+!AccountSummaryWithInvestmentEarnings methodsFor: 'as yet unclassified' stamp: 'DS 5/23/2018 19:52:03'!
 lines 
 
-	| lines investmentEarnings semaphore investmentEarningsLine |
+	| lines investmentEarnings promise investmentEarningsLine |
 
 	investmentEarnings _ InvestmentEarningVisitor for: account.
 
-	semaphore _ Semaphore new.		
-	[ lines _ (AccountSummary for: account) lines.
-	  semaphore signal ] fork.
+	promise _ Promise
+		do: [ lines _ (AccountSummary for: account) lines. ].
+
 	investmentEarningsLine _ 'Ganancias por ', investmentEarnings value printString.
 	
-	semaphore wait.
+	promise wait.
 	lines add: investmentEarningsLine.
 	
 	 ^ lines! !
@@ -1263,6 +1263,40 @@ InvestmentNetVisitor class
 for: aReceptiveAccount 
 	
 	^ self new initializeFor: aReceptiveAccount ! !
+
+
+!classDefinition: #Promise category: #'PortfolioTimeConsuming-Ejercicio'!
+Object subclass: #Promise
+	instanceVariableNames: 'semaphore'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'PortfolioTimeConsuming-Ejercicio'!
+
+!Promise methodsFor: 'initializing' stamp: 'DS 5/23/2018 19:49:28'!
+initializeDo: aBlockClosure
+
+	semaphore _ Semaphore new.
+	[ aBlockClosure value. 
+		semaphore signal ] fork.
+! !
+
+
+!Promise methodsFor: 'evaluating' stamp: 'DS 5/23/2018 19:48:10'!
+wait
+
+	semaphore wait.
+	! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Promise class' category: #'PortfolioTimeConsuming-Ejercicio'!
+Promise class
+	instanceVariableNames: ''!
+
+!Promise class methodsFor: 'class initialization' stamp: 'DS 5/23/2018 19:41:05'!
+do: aBlockClosure
+
+	^self new initializeDo: aBlockClosure! !
 
 
 !classDefinition: #SummarizingAccount category: #'PortfolioTimeConsuming-Ejercicio'!
