@@ -405,13 +405,13 @@ Object subclass: #TicTacToe
 	poolDictionaries: ''
 	category: 'TicTacToe-Ejercicio'!
 
-!TicTacToe methodsFor: 'initializing' stamp: 'jg 5/22/2018 10:22:35'!
+!TicTacToe methodsFor: 'initializing' stamp: 'DS 5/28/2018 18:39:23'!
 initialize
 	
-	xs:= Set new.
-	os:= Set new.
+	xs _ Set new.
+	os _ Set new.
 	
-	turn:= #x.! !
+	turn _ #x.! !
 
 
 !TicTacToe methodsFor: 'inspecting' stamp: 'jg 5/22/2018 12:21:33'!
@@ -461,15 +461,15 @@ isTied
 	^xs size = 5 and: [ os size = 4 and: [ self XHasWon not ]]! !
 
 
-!TicTacToe methodsFor: 'private' stamp: 'jg 5/22/2018 12:51:23'!
+!TicTacToe methodsFor: 'private' stamp: 'DS 5/28/2018 18:41:20'!
 hasCompletedColumn: positions
 	
-	^ (1 to: 3) anySatisfy: [ :y | (positions count: [ :position | position y = y ]) = 3 ]! !
+	^(1 to: 3) anySatisfy: [ :y | (positions count: [ :position | position y = y ]) = 3 ]! !
 
-!TicTacToe methodsFor: 'private' stamp: 'DS 5/28/2018 18:29:20'!
+!TicTacToe methodsFor: 'private' stamp: 'DS 5/28/2018 18:41:17'!
 hasCompletedRow: positions
 
-	^ (1 to: 3) anySatisfy: [ :x | (positions count: [ :position | position x = x ]) = 3 ]! !
+	^(1 to: 3) anySatisfy: [ :x | (positions count: [ :position | position x = x ]) = 3 ]! !
 
 !TicTacToe methodsFor: 'private' stamp: 'jg 5/22/2018 12:56:21'!
 hasDownDiagonal: positions
@@ -482,19 +482,19 @@ hasUpDiagonal: positions
 
 	^(1 to: 3) allSatisfy: [ :n | positions includes: n@(4-n) ]! !
 
-!TicTacToe methodsFor: 'private' stamp: 'jg 5/22/2018 13:01:53'!
+!TicTacToe methodsFor: 'private' stamp: 'DS 5/28/2018 18:41:04'!
 hasWin: positions
 
 	^(self hasCompletedRow: positions)
 		or: [(self hasCompletedColumn: positions) 
-				or: [(self hasDownDiagonal: positions)
-					or: [(self hasUpDiagonal: positions)]]]
+			or: [(self hasDownDiagonal: positions)
+				or: [(self hasUpDiagonal: positions)]]]
 
 
 ! !
 
 
-!TicTacToe methodsFor: 'accessing' stamp: 'DS 5/28/2018 18:28:37'!
+!TicTacToe methodsFor: 'accessing' stamp: 'DS 5/28/2018 18:42:36'!
 putOAt: aPosition
 
 	self isGameOver ifTrue: [ self error: self class canNotPlayWhenGameIsOverErrorMessage ].
@@ -502,11 +502,11 @@ putOAt: aPosition
 	(xs includes: aPosition) ifTrue: [ self error: self class positionTakenErrorMessage ].
 	(os includes: aPosition) ifTrue: [ self error: self class positionTakenErrorMessage ].
 	os add: aPosition.
-	(self hasWin: os) ifTrue: [ ^winner := #o ].
-	turn := #x
+	(self hasWin: os) ifTrue: [ ^winner _ #o ].
+	turn _ #x
 ! !
 
-!TicTacToe methodsFor: 'accessing' stamp: 'DS 5/28/2018 18:28:15'!
+!TicTacToe methodsFor: 'accessing' stamp: 'DS 5/28/2018 18:42:42'!
 putXAt: aPosition
 
 	self isGameOver ifTrue: [ self error: self class canNotPlayWhenGameIsOverErrorMessage ].
@@ -514,8 +514,8 @@ putXAt: aPosition
 	(xs includes: aPosition) ifTrue: [ self error: self class positionTakenErrorMessage ].
 	(os includes: aPosition) ifTrue: [ self error: self class positionTakenErrorMessage ].
 	xs add: aPosition.
-	(self hasWin: xs) ifTrue: [ ^winner := #x ].
-	turn := #o
+	(self hasWin: xs) ifTrue: [ ^winner _ #x ].
+	turn _ #o
 ! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
