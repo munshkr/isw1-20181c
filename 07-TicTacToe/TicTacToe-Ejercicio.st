@@ -5,14 +5,14 @@ TestCase subclass: #TicTacToeTest
 	poolDictionaries: ''
 	category: 'TicTacToe-Ejercicio'!
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 13:59:30'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 13:59:30'!
 test01NewGameIsEmpty
 	| game |
 	game _ TicTacToe new.
 	self assert: game Xs isEmpty.
 	self assert: game Os isEmpty.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 18:31:14'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/28/2018 18:31:14'!
 test02PuttingXIncrementsXsNotOs
 	| game |
 	game _ TicTacToe new.
@@ -23,7 +23,7 @@ test02PuttingXIncrementsXsNotOs
 	self assert: (game Xs includes: 1 @ 1).
 	self assert: game Os isEmpty.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 18:32:27'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/28/2018 18:32:27'!
 test03CanPutOAfterX
 	| game |
 	game _ TicTacToe new.
@@ -38,7 +38,7 @@ test03CanPutOAfterX
 		equals: game Os size.
 	self assert: (game Os includes: 2 @ 2).! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 18:32:02'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/28/2018 18:32:02'!
 test04CannotPutXInOTurn
 	| game |
 	game _ TicTacToe new.
@@ -56,7 +56,7 @@ test04CannotPutXInOTurn
 			self assert: (game Xs includes: 1 @ 1).
 			self assert: game Os isEmpty ].! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:48:28'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/28/2018 20:48:28'!
 test05CannotPutOInXTurn
 	| game |
 	game _ TicTacToe new.
@@ -78,7 +78,7 @@ test05CannotPutOInXTurn
 				equals: game Os size.
 			self assert: (game Os includes: 2 @ 2) ].! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 14:00:19'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 14:00:19'!
 test06CannotPutXAtPositionTakenByX
 	| game |
 	game _ TicTacToe new.
@@ -100,7 +100,7 @@ test06CannotPutXAtPositionTakenByX
 				equals: game Os size.
 			self assert: (game Os includes: 2 @ 2) ].! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 14:00:37'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 14:00:37'!
 test07CannotPutXAtPositionTakenByO
 	| game |
 	game _ TicTacToe new.
@@ -122,7 +122,7 @@ test07CannotPutXAtPositionTakenByO
 				equals: game Os size.
 			self assert: (game Os includes: 2 @ 2) ].! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 14:01:00'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 14:01:00'!
 test08CannotPutOAtPositionTakenByX
 	| game |
 	game _ TicTacToe new.
@@ -140,7 +140,7 @@ test08CannotPutOAtPositionTakenByX
 			self assert: (game Xs includes: 1 @ 1).
 			self assert: game Os isEmpty ].! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 14:01:16'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 14:01:16'!
 test09CannotPutOAtPositionTakenByO
 	| game |
 	game _ TicTacToe new.
@@ -164,7 +164,7 @@ test09CannotPutOAtPositionTakenByO
 				equals: game Os size.
 			self assert: (game Os includes: 2 @ 2) ].! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 14:01:47'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 14:01:47'!
 test10GameCanBeTied
 	| game |
 	game _ TicTacToe new.
@@ -175,7 +175,7 @@ test10GameCanBeTied
 	self deny: game OHasWon.
 	self deny: game XHasWon.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 14:02:15'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 14:02:15'!
 test11XCanWinByTakingRow
 	| game |
 	game _ TicTacToe new.
@@ -187,7 +187,7 @@ test11XCanWinByTakingRow
 	self assert: game XHasWon.
 	self deny: game OHasWon.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 14:05:33'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 14:05:33'!
 test12XCanWinByTakingSecondRow
 	| game |
 	game _ TicTacToe new.
@@ -199,7 +199,7 @@ test12XCanWinByTakingSecondRow
 	self assert: game XHasWon.
 	self deny: game OHasWon.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 14:05:49'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 14:05:49'!
 test13XCanWinByTakingThirdRow
 	| game |
 	game _ TicTacToe new.
@@ -211,7 +211,7 @@ test13XCanWinByTakingThirdRow
 	self assert: game XHasWon.
 	self deny: game OHasWon.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 15:13:16'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 15:13:16'!
 test14XCanWinByTakingFirstColumn
 	| game |
 	game _ TicTacToe new.
@@ -223,7 +223,7 @@ test14XCanWinByTakingFirstColumn
 	self assert: game XHasWon.
 	self deny: game OHasWon.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 15:13:40'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 15:13:40'!
 test15XCanWinByTakingDownDiagonal
 	| game |
 	game _ TicTacToe new.
@@ -235,7 +235,7 @@ test15XCanWinByTakingDownDiagonal
 	self assert: game XHasWon.
 	self deny: game OHasWon.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 15:14:15'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 15:14:15'!
 test16XCanWinByTakingUpDiagonal
 	| game |
 	game _ TicTacToe new.
@@ -247,7 +247,7 @@ test16XCanWinByTakingUpDiagonal
 	self assert: game XHasWon.
 	self deny: game OHasWon.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 15:14:33'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 15:14:33'!
 test17OCanWinByTakingFirstRow
 	| game |
 	game _ TicTacToe new.
@@ -260,7 +260,7 @@ test17OCanWinByTakingFirstRow
 	self assert: game OHasWon.
 	self deny: game XHasWon.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 15:15:54'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 15:15:54'!
 test18OCannotPlayWhenXWonGame
 	| game |
 	game _ TicTacToe new.
@@ -282,7 +282,7 @@ test18OCannotPlayWhenXWonGame
 			self assert: (game Os includes: 2 @ 1).
 			self assert: (game Os includes: 3 @ 1) ].! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 15:17:28'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 15:17:28'!
 test19XCannotPlayWhenOWonGame
 	| game |
 	game _ TicTacToe new.
@@ -306,7 +306,7 @@ test19XCannotPlayWhenOWonGame
 			self assert: (game Xs includes: 2 @ 1).
 			self assert: (game Xs includes: 3 @ 1) ].! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 15:19:23'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 15:19:23'!
 test20GameIsTiedAfterPlaying
 	| game |
 	game _ TicTacToe new.
@@ -324,7 +324,7 @@ test20GameIsTiedAfterPlaying
 	self deny: game OHasWon.
 	self assert: game isTied.! !
 
-!TicTacToeTest methodsFor: 'as yet unclassified' stamp: 'DS 5/30/2018 15:19:08'!
+!TicTacToeTest methodsFor: 'tests' stamp: 'DS 5/30/2018 15:19:08'!
 test21XWinsAfterPlaying
 	| game |
 	game _ TicTacToe new.
@@ -418,22 +418,22 @@ putXAt: aPosition
 TicTacToe class
 	instanceVariableNames: ''!
 
-!TicTacToe class methodsFor: 'as yet unclassified' stamp: 'jg 5/22/2018 13:15:31'!
+!TicTacToe class methodsFor: 'errors' stamp: 'jg 5/22/2018 13:15:31'!
 canNotPlayWhenGameIsOverErrorMessage
 	
 	^'Can not play when game is over'! !
 
-!TicTacToe class methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:10:37'!
+!TicTacToe class methodsFor: 'errors' stamp: 'DS 5/28/2018 19:10:37'!
 notOTurnErrorMessage
 
 	^'Not O turn'! !
 
-!TicTacToe class methodsFor: 'as yet unclassified' stamp: 'jg 5/22/2018 10:26:38'!
+!TicTacToe class methodsFor: 'errors' stamp: 'jg 5/22/2018 10:26:38'!
 notXTurnErrorMessage
 
 	^'Not X turn'! !
 
-!TicTacToe class methodsFor: 'as yet unclassified' stamp: 'jg 5/22/2018 11:20:12'!
+!TicTacToe class methodsFor: 'errors' stamp: 'jg 5/22/2018 11:20:12'!
 positionTakenErrorMessage
 	
 	^'Position taken'! !
@@ -446,47 +446,47 @@ Object subclass: #TicTacToeState
 	poolDictionaries: ''
 	category: 'TicTacToe-Ejercicio'!
 
-!TicTacToeState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:43:52'!
+!TicTacToeState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:43:52'!
 OHasWon
 	
 	^self hasWin: os! !
 
-!TicTacToeState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:42:00'!
+!TicTacToeState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 19:42:00'!
 Os
 
 	^ os copy! !
 
-!TicTacToeState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:43:58'!
+!TicTacToeState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:43:58'!
 XHasWon
 	
 	^self hasWin: xs! !
 
-!TicTacToeState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:42:03'!
+!TicTacToeState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 19:42:03'!
 Xs
 
 	^ xs copy! !
 
-!TicTacToeState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:42:54'!
+!TicTacToeState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:42:54'!
 isGameOver
 	
 	^self OHasWon or: [self XHasWon]! !
 
-!TicTacToeState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:46:19'!
+!TicTacToeState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 19:46:19'!
 isOver
 	
 	^self XHasWon or: [ self OHasWon or: [ self isTied ]]! !
 
-!TicTacToeState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:43:07'!
+!TicTacToeState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 19:43:07'!
 isPlayingO
 
 	self subclassResponsibility ! !
 
-!TicTacToeState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:43:08'!
+!TicTacToeState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 19:43:08'!
 isPlayingX
 
 	self subclassResponsibility ! !
 
-!TicTacToeState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:46:35'!
+!TicTacToeState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 19:46:35'!
 isTied
 	
 	^xs size = 5 and: [ os size = 4 and: [ self XHasWon not ]]! !
@@ -550,12 +550,12 @@ putXAt: aPosition
 TicTacToeState class
 	instanceVariableNames: ''!
 
-!TicTacToeState class methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:03:14'!
+!TicTacToeState class methodsFor: 'class initialization' stamp: 'DS 5/28/2018 19:03:14'!
 empty
 
 	^self withXs: Set new withOs: Set new! !
 
-!TicTacToeState class methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:02:55'!
+!TicTacToeState class methodsFor: 'class initialization' stamp: 'DS 5/28/2018 19:02:55'!
 withXs: xSet withOs: oSet
 
 	^self new
@@ -570,12 +570,12 @@ TicTacToeState subclass: #TicTacToeFinishedState
 	poolDictionaries: ''
 	category: 'TicTacToe-Ejercicio'!
 
-!TicTacToeFinishedState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:06:51'!
+!TicTacToeFinishedState methodsFor: 'accessing' stamp: 'DS 5/28/2018 19:06:51'!
 putOAt: aPosition
 
 	self error: TicTacToe canNotPlayWhenGameIsOverErrorMessage! !
 
-!TicTacToeFinishedState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:06:54'!
+!TicTacToeFinishedState methodsFor: 'accessing' stamp: 'DS 5/28/2018 19:06:54'!
 putXAt: aPosition
 
 	self error: TicTacToe canNotPlayWhenGameIsOverErrorMessage! !
@@ -588,12 +588,12 @@ TicTacToeFinishedState subclass: #TicTacToeFinishedOTurnState
 	poolDictionaries: ''
 	category: 'TicTacToe-Ejercicio'!
 
-!TicTacToeFinishedOTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:45:12'!
+!TicTacToeFinishedOTurnState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:45:12'!
 isPlayingO
 
 	^true! !
 
-!TicTacToeFinishedOTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:45:07'!
+!TicTacToeFinishedOTurnState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:45:07'!
 isPlayingX
 
 	^false! !
@@ -606,12 +606,12 @@ TicTacToeFinishedState subclass: #TicTacToeFinishedXTurnState
 	poolDictionaries: ''
 	category: 'TicTacToe-Ejercicio'!
 
-!TicTacToeFinishedXTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:45:23'!
+!TicTacToeFinishedXTurnState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:45:23'!
 isPlayingO
 
 	^false! !
 
-!TicTacToeFinishedXTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:45:27'!
+!TicTacToeFinishedXTurnState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:45:27'!
 isPlayingX
 
 	^true! !
@@ -632,17 +632,18 @@ TicTacToePlayingState subclass: #TicTacToePlayingOTurnState
 	poolDictionaries: ''
 	category: 'TicTacToe-Ejercicio'!
 
-!TicTacToePlayingOTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:45:53'!
+!TicTacToePlayingOTurnState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:45:53'!
 isPlayingO
 
 	^true! !
 
-!TicTacToePlayingOTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:45:48'!
+!TicTacToePlayingOTurnState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:45:48'!
 isPlayingX
 
 	^false! !
 
-!TicTacToePlayingOTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:54:22'!
+
+!TicTacToePlayingOTurnState methodsFor: 'accessing' stamp: 'DS 5/28/2018 20:54:22'!
 putOAt: aPosition
 	| newOs |
 
@@ -662,7 +663,7 @@ putOAt: aPosition
 				withXs: xs
 				withOs: newOs ].! !
 
-!TicTacToePlayingOTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:58:17'!
+!TicTacToePlayingOTurnState methodsFor: 'accessing' stamp: 'DS 5/28/2018 19:58:17'!
 putXAt: aPosition
 
 	self error: TicTacToe notXTurnErrorMessage.! !
@@ -675,22 +676,23 @@ TicTacToePlayingState subclass: #TicTacToePlayingXTurnState
 	poolDictionaries: ''
 	category: 'TicTacToe-Ejercicio'!
 
-!TicTacToePlayingXTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:46:02'!
+!TicTacToePlayingXTurnState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:46:02'!
 isPlayingO
 
 	^false! !
 
-!TicTacToePlayingXTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:46:05'!
+!TicTacToePlayingXTurnState methodsFor: 'inspecting' stamp: 'DS 5/28/2018 20:46:05'!
 isPlayingX
 
 	^true! !
 
-!TicTacToePlayingXTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 19:56:48'!
+
+!TicTacToePlayingXTurnState methodsFor: 'accessing' stamp: 'DS 5/28/2018 19:56:48'!
 putOAt: aPosition
 
 	self error: TicTacToe notOTurnErrorMessage.! !
 
-!TicTacToePlayingXTurnState methodsFor: 'as yet unclassified' stamp: 'DS 5/28/2018 20:56:09'!
+!TicTacToePlayingXTurnState methodsFor: 'accessing' stamp: 'DS 5/28/2018 20:56:09'!
 putXAt: aPosition
 	| newXs |
 
