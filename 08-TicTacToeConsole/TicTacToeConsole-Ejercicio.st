@@ -5,13 +5,13 @@ TestCase subclass: #TicTacToeConsoleTest
 	poolDictionaries: ''
 	category: 'TicTacToe'!
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:13:17'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:13:17'!
 test01ConsolePrintsNothingOnNewGame
 	game _ TicTacToe new.
 	console _ Console for: game.
 	self assert: console lines = OrderedCollection new.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:13:08'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:13:08'!
 test02ConsolePrintsWhenPlayerXPlays
 	| expectedLines |
 	game _ TicTacToe new.
@@ -23,7 +23,7 @@ test02ConsolePrintsWhenPlayerXPlays
 		with: 'Estado: Jugando O'.
 	self assert: console lines = expectedLines.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:12:59'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:12:59'!
 test03ConsolePrintsWhenPlayerOPlays
 	| expectedLines |
 	game _ TicTacToe new.
@@ -37,7 +37,7 @@ test03ConsolePrintsWhenPlayerOPlays
 		with: 'Estado: Jugando X'.
 	self assert: console lines = expectedLines.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:12:51'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:12:51'!
 test04ConsolePrintsWhenPlayerXPlaysAgain
 	| expectedLines |
 	game _ TicTacToe new.
@@ -53,7 +53,7 @@ test04ConsolePrintsWhenPlayerXPlaysAgain
 		with: 'Estado: Jugando O'.
 	self assert: console lines = expectedLines.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:13:57'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:13:57'!
 test05ConsolePrintsWhenPlayerXWins
 	| expectedLines |
 	game _ TicTacToe new.
@@ -74,7 +74,7 @@ test05ConsolePrintsWhenPlayerXWins
 	}.
 	self assert: console lines = expectedLines.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:14:33'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:14:33'!
 test06ConsolePrintsWhenPlayerOWins
 	| expectedLines |
 	game _ TicTacToe new.
@@ -97,7 +97,7 @@ test06ConsolePrintsWhenPlayerOWins
 	}.
 	self assert: console lines = expectedLines.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:25:35'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:25:35'!
 test07ViewPrintsEmptyBoardOnNewGame
 	| expectedBoard |
 	game _ TicTacToe new.
@@ -113,7 +113,7 @@ test07ViewPrintsEmptyBoardOnNewGame
 	}.
 	self assert: view board = expectedBoard.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:46:30'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:46:30'!
 test08ViewShowsBoardWhenPlayerXPlays
 	| expectedBoard |
 	game _ TicTacToe new.
@@ -130,7 +130,7 @@ test08ViewShowsBoardWhenPlayerXPlays
 	}.
 	self assert: view board = expectedBoard.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:48:30'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:48:30'!
 test09ViewShowsBoardWhenPlayerOPlays
 	| expectedBoard |
 	game _ TicTacToe new.
@@ -147,7 +147,7 @@ test09ViewShowsBoardWhenPlayerOPlays
 	}.
 	self assert: view board = expectedBoard.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:49:16'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:49:16'!
 test10ViewShowsBoardWhenPlayerXPlaysAgain
 	| expectedBoard |
 	game _ TicTacToe new.
@@ -164,7 +164,7 @@ test10ViewShowsBoardWhenPlayerXPlaysAgain
 	}.
 	self assert: view board = expectedBoard.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 20:50:04'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 5/31/2018 20:50:04'!
 test11ViewShowsBoardWhenPlayerXWins
 	| expectedBoard |
 	game _ TicTacToe new.
@@ -181,7 +181,7 @@ test11ViewShowsBoardWhenPlayerXWins
 	}.
 	self assert: view board = expectedBoard.! !
 
-!TicTacToeConsoleTest methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 11:49:32'!
+!TicTacToeConsoleTest methodsFor: 'testing' stamp: 'DS 6/2/2018 11:49:32'!
 test12ViewShowsBoardWhenPlayerOWins
 	| expectedBoard |
 	game _ TicTacToe new.
@@ -675,14 +675,15 @@ Object subclass: #Observer
 	poolDictionaries: ''
 	category: 'TicTacToe'!
 
-!Observer methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:03:06'!
+!Observer methodsFor: 'initializing' stamp: 'DS 6/2/2018 12:03:06'!
 initializeFor: anObservable
 
 	observable _ anObservable.
 	observable registerObserver: self
 ! !
 
-!Observer methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:03:49'!
+
+!Observer methodsFor: 'observable' stamp: 'DS 6/2/2018 12:03:49'!
 notifyChanges
 
 	self subclassResponsibility ! !
@@ -693,7 +694,7 @@ notifyChanges
 Observer class
 	instanceVariableNames: ''!
 
-!Observer class methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 11:51:48'!
+!Observer class methodsFor: 'class initialization' stamp: 'DS 6/2/2018 11:51:48'!
 for: anObservable 
 
 	^self new initializeFor: anObservable! !
@@ -706,43 +707,45 @@ Observer subclass: #Console
 	poolDictionaries: ''
 	category: 'TicTacToe'!
 
-!Console methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:06:45'!
+!Console methodsFor: 'initializing' stamp: 'DS 6/2/2018 12:06:45'!
 initializeFor: aGame
 	super initializeFor: aGame.
 	lines _ OrderedCollection new.
 
 ! !
 
-!Console methodsFor: 'as yet unclassified' stamp: 'DS 5/31/2018 19:16:24'!
+
+!Console methodsFor: 'inspecting' stamp: 'DS 5/31/2018 19:16:24'!
 lines
 	^lines! !
 
-!Console methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:04:05'!
+
+!Console methodsFor: 'observable' stamp: 'DS 6/2/2018 12:04:05'!
 notifyChanges: aState
 	aState accept: self.! !
 
-!Console methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:16:31'!
+!Console methodsFor: 'observable' stamp: 'DS 6/2/2018 12:16:31'!
 visitPlayerOWon
 	| aPoint |
 	aPoint _ observable lastPlay.
 	lines add: 'O marcó en ' , aPoint asString.
 	lines add: 'Estado: Juego terminado - Ganó O!!'.! !
 
-!Console methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:16:42'!
+!Console methodsFor: 'observable' stamp: 'DS 6/2/2018 12:16:42'!
 visitPlayerXWon
 	| aPoint |
 	aPoint _ observable lastPlay.
 	lines add: 'X marcó en ' , aPoint asString.
 	lines add: 'Estado: Juego terminado - Ganó X!!'.! !
 
-!Console methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:16:46'!
+!Console methodsFor: 'observable' stamp: 'DS 6/2/2018 12:16:46'!
 visitPlayingO
 	| aPoint |
 	aPoint _ observable lastPlay.
 	lines add: 'X marcó en ' , aPoint asString.
 	lines add: 'Estado: Jugando O'.! !
 
-!Console methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:16:50'!
+!Console methodsFor: 'observable' stamp: 'DS 6/2/2018 12:16:50'!
 visitPlayingX
 	| aPoint |
 	aPoint _ observable lastPlay.
@@ -757,22 +760,11 @@ Observer subclass: #View
 	poolDictionaries: ''
 	category: 'TicTacToe'!
 
-!View methodsFor: 'initializing' stamp: 'DS 6/2/2018 12:08:30'!
+!View methodsFor: 'initializing' stamp: 'DS 6/2/2018 12:33:40'!
 initializeFor: aGame 
 	super initializeFor: aGame.
-	board _ OrderedCollection withAll: {
-		' | | '.
-		'------'.
-		' | | '.
-		'------'.
-		' | | '.
-		'------'.
-	}.! !
-
-
-!View methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:08:16'!
-notifyChanges: aState
-	board _ self drawBoard.! !
+	board _ self drawBoard.
+! !
 
 
 !View methodsFor: 'inspecting' stamp: 'DS 5/31/2018 20:28:47'!
@@ -780,21 +772,38 @@ board
 	^board! !
 
 
-!View methodsFor: 'private' stamp: 'DS 6/2/2018 11:56:20'!
+!View methodsFor: 'private' stamp: 'DS 6/2/2018 12:39:00'!
+buildBoardCells
+
+	| boardCells |
+	
+	boardCells _ self buildEmptyBoardCells.
+	self fillPlayerXPositionsOn: boardCells.
+	self fillPlayerOPositionsOn: boardCells.
+	
+	^boardCells
+! !
+
+!View methodsFor: 'private' stamp: 'DS 6/2/2018 12:37:58'!
+buildEmptyBoardCells
+
+	| emptyRow |
+	
+	emptyRow _ self buildEmptyRow.
+	^OrderedCollection with: emptyRow copy with: emptyRow copy with: emptyRow copy.
+! !
+
+!View methodsFor: 'private' stamp: 'DS 6/2/2018 12:37:05'!
+buildEmptyRow
+
+	^OrderedCollection with: ' ' with: ' ' with: ' '.! !
+
+!View methodsFor: 'private' stamp: 'DS 6/2/2018 12:38:47'!
 drawBoard
-	| emptyRow boardCells newBoard |
+
+	| boardCells newBoard |
 	
-	emptyRow _ OrderedCollection with: ' ' with: ' ' with: ' '.
-	boardCells _ OrderedCollection with: emptyRow copy with: emptyRow copy with: emptyRow copy.
-	
-	observable playerXPositions do: [ :aPosition | |row col|
-		row _ aPosition x.
-		col _ aPosition y.
-		(boardCells at: row) at: col put: 'X'. ].
-	observable playerOPositions do: [ :aPosition | |row col|
-		row _ aPosition x.
-		col _ aPosition y.
-		(boardCells at: row) at: col put: 'O'. ].	
+	boardCells _ self buildBoardCells.
 	
 	newBoard _ OrderedCollection new.
 	boardCells do: [ :aRow |
@@ -804,6 +813,29 @@ drawBoard
 
 	^newBoard
 ! !
+
+!View methodsFor: 'private' stamp: 'DS 6/2/2018 12:38:52'!
+fillPlayerOPositionsOn: boardCells
+
+	observable playerOPositions do: [ :aPosition | |row col|
+		row _ aPosition x.
+		col _ aPosition y.
+		(boardCells at: row) at: col put: 'O'. ].	
+! !
+
+!View methodsFor: 'private' stamp: 'DS 6/2/2018 12:38:56'!
+fillPlayerXPositionsOn: boardCells
+
+	observable playerXPositions do: [ :aPosition | |row col|
+		row _ aPosition x.
+		col _ aPosition y.
+		(boardCells at: row) at: col put: 'X'. ].	
+! !
+
+
+!View methodsFor: 'observable' stamp: 'DS 6/2/2018 12:08:16'!
+notifyChanges: aState
+	board _ self drawBoard.! !
 
 
 !classDefinition: #TicTacToe category: #TicTacToe!
@@ -1016,31 +1048,31 @@ registerObserver: anObserver
 TicTacToe class
 	instanceVariableNames: ''!
 
-!TicTacToe class methodsFor: 'as yet unclassified' stamp: 'HAW 10/24/2017 17:12:48'!
+!TicTacToe class methodsFor: 'error messages' stamp: 'HAW 10/24/2017 17:12:48'!
 canNotPlayWhenGameIsOverErrorMessage
 	
 	^'Can not play when game is over'! !
 
-!TicTacToe class methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:20:31'!
+!TicTacToe class methodsFor: 'error messages' stamp: 'DS 6/2/2018 12:20:31'!
 noPlayOnNewGameErrorMessage
 	^'no one played yet'! !
 
-!TicTacToe class methodsFor: 'as yet unclassified' stamp: 'HAW 10/24/2017 17:12:48'!
+!TicTacToe class methodsFor: 'error messages' stamp: 'HAW 10/24/2017 17:12:48'!
 notOTurnErrorMessage
 	
 	^'Not O''s turn'! !
 
-!TicTacToe class methodsFor: 'as yet unclassified' stamp: 'HAW 10/24/2017 17:12:48'!
+!TicTacToe class methodsFor: 'error messages' stamp: 'HAW 10/24/2017 17:12:48'!
 notXTurnErrorMessage
 	
 	^'Not X''s turn'! !
 
-!TicTacToe class methodsFor: 'as yet unclassified' stamp: 'HAW 10/27/2017 10:26:31'!
+!TicTacToe class methodsFor: 'error messages' stamp: 'HAW 10/27/2017 10:26:31'!
 positionOutsideBoardErrorMessage
 	
 	^'Position is outside board'! !
 
-!TicTacToe class methodsFor: 'as yet unclassified' stamp: 'HAW 10/24/2017 17:12:48'!
+!TicTacToe class methodsFor: 'error messages' stamp: 'HAW 10/24/2017 17:12:48'!
 positionTakenErrorMessage
 	
 	^'Position taken'! !
@@ -1115,7 +1147,7 @@ initializeFor: aGame
 TicTacToeState class
 	instanceVariableNames: ''!
 
-!TicTacToeState class methodsFor: 'as yet unclassified' stamp: 'HAW 10/25/2017 13:05:29'!
+!TicTacToeState class methodsFor: 'class initialization' stamp: 'HAW 10/25/2017 13:05:29'!
 for: aTicTacToe 
 	
 	^self new initializeFor: aTicTacToe ! !
@@ -1206,7 +1238,7 @@ lastPlay
 	^game playerOPositions last! !
 
 
-!PlayerOWon methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:07:03'!
+!PlayerOWon methodsFor: 'observer' stamp: 'DS 6/2/2018 12:07:03'!
 accept: anObserver
 	anObserver visitPlayerOWon! !
 
@@ -1237,7 +1269,7 @@ lastPlay
 	^game playerXPositions last! !
 
 
-!PlayerXWon methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:07:11'!
+!PlayerXWon methodsFor: 'observer' stamp: 'DS 6/2/2018 12:07:11'!
 accept: anObserver
 	anObserver visitPlayerXWon! !
 
@@ -1300,15 +1332,15 @@ markWithXAt: aPosition
 	game markWithXWhenPlayingOAt: aPosition.! !
 
 
-!PlayingO methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:07:18'!
-accept: anObserver
-	anObserver visitPlayingO! !
-
-
 !PlayingO methodsFor: 'testing game result' stamp: 'DS 6/2/2018 12:12:56'!
 lastPlay
 	
 	^game playerXPositions last! !
+
+
+!PlayingO methodsFor: 'observer' stamp: 'DS 6/2/2018 12:07:18'!
+accept: anObserver
+	anObserver visitPlayingO! !
 
 
 !classDefinition: #PlayingX category: #TicTacToe!
@@ -1343,15 +1375,15 @@ markWithXAt: aPosition
 	game markWithXWhenPlayingXAt: aPosition.! !
 
 
-!PlayingX methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:07:25'!
-accept: anObserver
-	anObserver visitPlayingX! !
-
-
 !PlayingX methodsFor: 'testing game result' stamp: 'DS 6/2/2018 12:13:02'!
 lastPlay
 	
 	^game playerOPositions last! !
+
+
+!PlayingX methodsFor: 'observer' stamp: 'DS 6/2/2018 12:07:25'!
+accept: anObserver
+	anObserver visitPlayingX! !
 
 
 !classDefinition: #PlayingXOnNewGame category: #TicTacToe!
@@ -1361,7 +1393,7 @@ PlayingX subclass: #PlayingXOnNewGame
 	poolDictionaries: ''
 	category: 'TicTacToe'!
 
-!PlayingXOnNewGame methodsFor: 'as yet unclassified' stamp: 'DS 6/2/2018 12:23:25'!
+!PlayingXOnNewGame methodsFor: 'testing game result' stamp: 'DS 6/2/2018 12:23:25'!
 lastPlay
 	
 	^self error: TicTacToe noPlayOnNewGameErrorMessage ! !
