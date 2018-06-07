@@ -1,11 +1,11 @@
 !classDefinition: #CartTest category: #'TusLibros.com'!
 TestCase subclass: #CartTest
-	instanceVariableNames: 'cart catalogue firstBook secondBook unknownBook'
+	instanceVariableNames: 'cart catalogue firstBook secondBook unknownBook market'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros.com'!
 
-!CartTest methodsFor: 'initializing' stamp: 'DS 6/6/2018 20:59:46'!
+!CartTest methodsFor: 'initializing' stamp: 'DS 6/6/2018 22:56:20'!
 setUp
 
 	firstBook _ Book new.
@@ -15,8 +15,10 @@ setUp
 	catalogue _ Catalogue new.
 	catalogue add: firstBook.
 	catalogue add: secondBook.
+	
+	market _ Market with: catalogue.
 
-	cart _ Cart for: catalogue.! !
+	cart _ Cart for: market.! !
 
 
 !CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 20:17:15'!
@@ -93,7 +95,7 @@ named: aString
 
 !classDefinition: #Cart category: #'TusLibros.com'!
 Object subclass: #Cart
-	instanceVariableNames: 'books catalogue'
+	instanceVariableNames: 'books market'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros.com'!
@@ -123,17 +125,17 @@ add: aBook
 
 	self add: aBook withAmount: 1! !
 
-!Cart methodsFor: 'accessing' stamp: 'DS 6/6/2018 21:28:38'!
+!Cart methodsFor: 'accessing' stamp: 'DS 6/6/2018 22:59:35'!
 add: aBook withAmount: anAmount
 
-	(catalogue includes: aBook) ifFalse: [ self error: Cart bookIsNotInCatalogueErrorMessage ].
+	(market catalogueIncludes: aBook) ifFalse: [ self error: Cart bookIsNotInCatalogueErrorMessage ].
 	books add: aBook withOccurrences: anAmount! !
 
 
-!Cart methodsFor: 'initializing' stamp: 'DS 6/6/2018 21:27:30'!
-initializeWith: aCatalogue 
+!Cart methodsFor: 'initializing' stamp: 'DS 6/6/2018 22:58:34'!
+initializeWith: aMarket 
 
-	catalogue _ aCatalogue.
+	market _ aMarket.
 	books _ Bag new.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
@@ -142,15 +144,10 @@ initializeWith: aCatalogue
 Cart class
 	instanceVariableNames: ''!
 
-!Cart class methodsFor: 'class initialization' stamp: 'DS 6/6/2018 20:50:31'!
-for: aCatalogue 
+!Cart class methodsFor: 'class initialization' stamp: 'DS 6/6/2018 22:58:11'!
+for: aMarket 
 
-	^self new initializeWith: aCatalogue! !
-
-!Cart class methodsFor: 'class initialization' stamp: 'DS 6/6/2018 20:03:59'!
-new
-
-	^super new initialize! !
+	^self new initializeWith: aMarket! !
 
 
 !Cart class methodsFor: 'error messages' stamp: 'DS 6/6/2018 21:28:20'!
@@ -190,3 +187,30 @@ Catalogue class
 new
 
 	^super new initialize! !
+
+
+!classDefinition: #Market category: #'TusLibros.com'!
+Object subclass: #Market
+	instanceVariableNames: 'catalogue'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros.com'!
+
+!Market methodsFor: 'initializing' stamp: 'DS 6/6/2018 22:57:11'!
+initializeWith: aCatalogue 
+	catalogue _ aCatalogue ! !
+
+
+!Market methodsFor: 'inspecting' stamp: 'DS 6/6/2018 22:59:56'!
+catalogueIncludes: aBook 
+	^catalogue includes: aBook! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Market class' category: #'TusLibros.com'!
+Market class
+	instanceVariableNames: ''!
+
+!Market class methodsFor: 'class initialization' stamp: 'DS 6/6/2018 22:56:40'!
+with: aCatalogue 
+	^self new initializeWith: aCatalogue! !
