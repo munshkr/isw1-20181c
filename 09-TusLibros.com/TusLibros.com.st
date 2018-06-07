@@ -5,7 +5,7 @@ TestCase subclass: #CartTest
 	poolDictionaries: ''
 	category: 'TusLibros.com'!
 
-!CartTest methodsFor: 'initializing' stamp: 'DS 6/6/2018 22:56:20'!
+!CartTest methodsFor: 'initializing' stamp: 'DS 6/7/2018 09:36:01'!
 setUp
 
 	firstBook _ Book new.
@@ -13,12 +13,10 @@ setUp
 	unknownBook _ Book new.
 	
 	catalogue _ Catalogue new.
-	catalogue add: firstBook.
-	catalogue add: secondBook.
+	catalogue add: firstBook withAmount: 1.
+	catalogue add: secondBook withAmount: 2.
 	
-	market _ Market with: catalogue.
-
-	cart _ Cart for: market.! !
+	cart _ Cart withCatalogue: catalogue! !
 
 
 !CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 20:17:15'!
@@ -65,13 +63,36 @@ test07ACartCantHaveAnUnknownBook
 			self assert: Cart bookIsNotInCatalogueErrorMessage equals: anError messageText.
 			cart isEmpty ].! !
 
-!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 21:32:08'!
+!CartTest methodsFor: 'testing' stamp: 'DS 6/7/2018 09:42:47'!
 test08ACartCanListItsBooks
 	| aSet |
 	aSet _ Set with: firstBook with: secondBook.
-	cart add: secondBook.
-	cart add: firstBook withAmount: 3.
+	cart add: secondBook withAmount: 2.
+	cart add: firstBook withAmount: 1.
 	self assert: cart list = aSet! !
+
+!CartTest methodsFor: 'testing' stamp: 'DS 6/7/2018 09:46:45'!
+test09ACartCantAddBookWithAmountZero
+	self
+		should: [
+			cart
+				add: firstBook
+				withAmount: 0 ]
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [ :anError |
+			self
+				assert: Cart cannotAddBookWithNonPositiveAmount
+				equals: anError messageText.
+			cart isEmpty ].! !
+
+!CartTest methodsFor: 'testing' stamp: 'DS 6/7/2018 09:43:06'!
+test10ACartCannotAddMoreBooksThanPresentInCatalogue
+	self
+		should: [ cart add: firstBook withAmount: 2 ] 
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [ :anError |
+			self assert: Cart cannotAddMoreBooksThanInCatalogue equals: anError messageText.
+			cart isEmpty ].! !
 
 
 !classDefinition: #Book category: #'TusLibros.com'!
@@ -95,7 +116,7 @@ named: aString
 
 !classDefinition: #Cart category: #'TusLibros.com'!
 Object subclass: #Cart
-	instanceVariableNames: 'books market'
+	instanceVariableNames: 'books catalogue'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros.com'!
@@ -125,17 +146,20 @@ add: aBook
 
 	self add: aBook withAmount: 1! !
 
-!Cart methodsFor: 'accessing' stamp: 'DS 6/6/2018 22:59:35'!
+!Cart methodsFor: 'accessing' stamp: 'DS 6/7/2018 09:47:21'!
 add: aBook withAmount: anAmount
 
-	(market catalogueIncludes: aBook) ifFalse: [ self error: Cart bookIsNotInCatalogueErrorMessage ].
+	(catalogue includes: aBook) ifFalse: [ self error: Cart bookIsNotInCatalogueErrorMessage ].
+	(anAmount <= 0) ifTrue: [self error: Cart cannotAddBookWithNonPositiveAmount ].
+	(anAmount > (catalogue quantityOf: aBook)) ifTrue: [ self error: Cart cannotAddMoreBooksThanInCatalogue ].
+	
 	books add: aBook withOccurrences: anAmount! !
 
 
-!Cart methodsFor: 'initializing' stamp: 'DS 6/6/2018 22:58:34'!
-initializeWith: aMarket 
+!Cart methodsFor: 'initializing' stamp: 'DS 6/7/2018 09:34:57'!
+initializeWithCatalogue: aCatalogue
 
-	market _ aMarket.
+	catalogue _ aCatalogue.
 	books _ Bag new.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
@@ -149,10 +173,23 @@ for: aMarket
 
 	^self new initializeWith: aMarket! !
 
+!Cart class methodsFor: 'class initialization' stamp: 'DS 6/7/2018 09:34:38'!
+withCatalogue: aCatalogue
+
+	^self new initializeWithCatalogue: aCatalogue! !
+
 
 !Cart class methodsFor: 'error messages' stamp: 'DS 6/6/2018 21:28:20'!
 bookIsNotInCatalogueErrorMessage
 	^'Book is not in catalogue'! !
+
+!Cart class methodsFor: 'error messages' stamp: 'DS 6/7/2018 09:46:59'!
+cannotAddBookWithNonPositiveAmount
+	^ 'cannot add book with non positive amount'.! !
+
+!Cart class methodsFor: 'error messages' stamp: 'DS 6/7/2018 09:42:10'!
+cannotAddMoreBooksThanInCatalogue
+	^'cannot add more books than in catalogue'! !
 
 
 !classDefinition: #Catalogue category: #'TusLibros.com'!
@@ -162,20 +199,28 @@ Object subclass: #Catalogue
 	poolDictionaries: ''
 	category: 'TusLibros.com'!
 
-!Catalogue methodsFor: 'accessing' stamp: 'DS 6/6/2018 20:56:18'!
+!Catalogue methodsFor: 'accessing' stamp: 'DS 6/7/2018 09:33:43'!
 add: aBook 
-	books add: aBook! !
+	books add: aBook withAmount: 1! !
+
+!Catalogue methodsFor: 'accessing' stamp: 'DS 6/7/2018 09:34:09'!
+add: aBook withAmount: anAmount
+	books add: aBook withOccurrences: anAmount! !
 
 
 !Catalogue methodsFor: 'inspecting' stamp: 'DS 6/6/2018 21:27:55'!
 includes: aBook 
 	^books includes: aBook! !
 
+!Catalogue methodsFor: 'inspecting' stamp: 'DS 6/7/2018 09:41:50'!
+quantityOf: aBook 
+	^books occurrencesOf: aBook! !
 
-!Catalogue methodsFor: 'initializing' stamp: 'DS 6/6/2018 20:57:45'!
+
+!Catalogue methodsFor: 'initializing' stamp: 'DS 6/7/2018 09:33:02'!
 initialize
 
-	books _ Set new! !
+	books _ Bag new! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -187,30 +232,3 @@ Catalogue class
 new
 
 	^super new initialize! !
-
-
-!classDefinition: #Market category: #'TusLibros.com'!
-Object subclass: #Market
-	instanceVariableNames: 'catalogue'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'TusLibros.com'!
-
-!Market methodsFor: 'initializing' stamp: 'DS 6/6/2018 22:57:11'!
-initializeWith: aCatalogue 
-	catalogue _ aCatalogue ! !
-
-
-!Market methodsFor: 'inspecting' stamp: 'DS 6/6/2018 22:59:56'!
-catalogueIncludes: aBook 
-	^catalogue includes: aBook! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'Market class' category: #'TusLibros.com'!
-Market class
-	instanceVariableNames: ''!
-
-!Market class methodsFor: 'class initialization' stamp: 'DS 6/6/2018 22:56:40'!
-with: aCatalogue 
-	^self new initializeWith: aCatalogue! !
