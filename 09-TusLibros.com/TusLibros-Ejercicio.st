@@ -5,11 +5,12 @@ TestCase subclass: #TusLibrosTests
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 03:29:51'!
+!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 18:12:46'!
 setUp
 	catalogWithElements _ Dictionary new.
 	catalogWithElements at: 1 put: 2.
 	catalogWithElements at: 2 put: 1.
+	catalogWithElements at: 3 put: 3.
 	emptyCatalog _ Dictionary new.
 	aCart _ Cart withCatalog: catalogWithElements.
 	cartWithEmptyCatalog _ Cart withCatalog: emptyCatalog.
@@ -43,56 +44,45 @@ test05ACartWithAQuantityOfOneElementCountsGood
 	aCart add: 2.
 	self assert: aCart elements = 3! !
 
-!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 02:59:45'!
-test06ACartKnowWhenHasOneContent
+!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 18:16:08'!
+test06CanNotAddNonNaturalNumberOfItems
+	self
+		should: [
+			aCart
+				add: 1
+				quantity: 0 ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			anError messageText = 'La cantidad debe ingresar un natural mayor o igual a 1'.
+			self assert: cartWithEmptyCatalog isEmpty ].! !
+
+!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 18:16:28'!
+test07CanNotAddGreaterQuantityThanStock
+	self
+		should: [
+			aCart
+				add: 1
+				quantity: 6 ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			anError messageText = 'No hay tantos productos'.
+			self assert: cartWithEmptyCatalog isEmpty ].! !
+
+!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 18:14:05'!
+test08ACartKnowHowManyElementsHasOfEachElement
 	aCart add: 1 quantity: 2.
-	self assert: (aCart contents: 1)! !
+	aCart add: 3 quantity: 3.
+	self assert: (aCart quantityOf: 1 ) = 2.
+	self assert: (aCart quantityOf: 3 ) = 3.! !
 
-!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 02:59:55'!
-test07ACartKnowHowManyContentsHas
-	aCart add: 1 quantity: 2.
-	self deny: (aCart contents: 2)! !
-
-!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 03:00:06'!
-test08ACartKnowWhenAContentGotTwoElements
-	aCart add: 1 quantity: 2.
-	self assert: (aCart quantityOf: 1 ) = 2! !
-
-!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 03:00:20'!
-test09ACartKnowHowManyElementsGotFromAContent
-
-	aCart add: 1 quantity: 1.
-	self assert: (aCart quantityOf: 1 ) = 1! !
-
-!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 03:00:32'!
-test10ACartCantAddThingsThatAreNotInTheCatalog
-
-	self should: [cartWithEmptyCatalog add: 1] 
-		raise: Error 
-		withExceptionDo: [:anError |
-								anError messageText = 'No pertenece al catalogo'.
-								self assert: cartWithEmptyCatalog isEmpty .
-							 ].! !
-
-!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 03:28:40'!
-test11CanNotAddNonNaturalNumberOfItems
-
-	self should: [aCart add: 1 quantity: 0] 
-		raise: Error 
-		withExceptionDo: [:anError |
-								anError messageText = 'Debe ingresar un natural mayor o igual a 1'.
-								self assert: cartWithEmptyCatalog isEmpty .
-							 ].! !
-
-!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 03:29:24'!
-test12CanNotAddGreaterQuantityThanStock
-
-	self should: [aCart add: 1 quantity: 6] 
-		raise: Error 
-		withExceptionDo: [:anError |
-								anError messageText = 'Debe ingresar un natural mayor o igual a 1'.
-								self assert: cartWithEmptyCatalog isEmpty .
-							 ].! !
+!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 18:17:00'!
+test09ACartCantAddThingsThatAreNotInTheCatalog
+	self
+		should: [ cartWithEmptyCatalog add: 1 ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			anError messageText = 'No pertenece al catalogo'.
+			self assert: cartWithEmptyCatalog isEmpty ].! !
 
 
 !classDefinition: #Cart category: #'TusLibros-Ejercicio'!
@@ -118,13 +108,13 @@ add: anElement
 	self add: anElement quantity: 1.
 ! !
 
-!Cart methodsFor: 'adding' stamp: 'f.o. 6/7/2018 03:23:34'!
+!Cart methodsFor: 'adding' stamp: 'f.o. 6/7/2018 17:38:33'!
 add: anElement quantity: aQuantity 
-	self assert: aQuantity isInteger description: [self error: 'Debe ingresar un natural mayor o igual a 1'].
-	self assert:  aQuantity  > 0 description: [self error: 'Debe ingresar un natural mayor o igual a 1'].
+	self assert: aQuantity isInteger description: [self error: 'La cantidad debe ingresar un natural mayor o igual a 1'].
+	self assert:  aQuantity  > 0 description: [self error: 'La cantidad debe ingresar un natural mayor o igual a 1'].
 	
 	self assert: (catalog includesKey: anElement) description: [self error: 'No pertenece al catalogo'].
-	self assert: ((catalog at: anElement) >= aQuantity) description: [self error: 'No pertenece al catalogo'].
+	self assert: ((catalog at: anElement) >= aQuantity) description: [self error: 'No hay tantos productos'].
 	
 	elements add: anElement withOccurrences: aQuantity.
 	
