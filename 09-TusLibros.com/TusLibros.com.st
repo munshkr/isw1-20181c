@@ -1,61 +1,75 @@
 !classDefinition: #CartTest category: #'TusLibros.com'!
 TestCase subclass: #CartTest
-	instanceVariableNames: 'cart'
+	instanceVariableNames: 'cart catalogue firstBook secondBook unknownBook'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros.com'!
 
-!CartTest methodsFor: 'initializing' stamp: 'DS 6/6/2018 19:57:56'!
+!CartTest methodsFor: 'initializing' stamp: 'DS 6/6/2018 20:59:46'!
 setUp
 
-	cart _ Cart new.! !
+	firstBook _ Book new.
+	secondBook _ Book new.
+	unknownBook _ Book new.
+	
+	catalogue _ Catalogue new.
+	catalogue add: firstBook.
+	catalogue add: secondBook.
+
+	cart _ Cart for: catalogue.! !
 
 
 !CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 20:17:15'!
 test01ANewCartIsEmpty
 	self assert: cart isEmpty! !
 
-!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 20:17:12'!
+!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 20:59:58'!
 test02ACartWithBooksIsNotEmpty
-	| aBook | 
-	aBook _ Book named: 'Ficciones'.
-	cart add: aBook.
+	cart add: firstBook.
 	self deny: cart isEmpty! !
 
-!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 20:12:26'!
+!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 21:00:18'!
 test03ACartIncludesBookAfterAddingIt
-	| aBook |
-	aBook _ Book named: 'Ficciones'.
-	cart add: aBook.
-	self assert: (cart includes: aBook).! !
+	cart add: firstBook.
+	self assert: (cart includes: firstBook).! !
 
-!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 20:17:06'!
+!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 21:00:49'!
 test04ACartDoesNotIncludeBookIfItWasNotAdded
-	| aBook |
-	aBook _ Book named: 'Ficciones'.
-	self deny: (cart includes: aBook)! !
 
-!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 20:30:08'!
+	self deny: (cart includes: firstBook)! !
+
+!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 21:01:04'!
 test05ACartCountsTheAmountOfBooksAdded
-	| aBook |
-	aBook _ Book named: 'Ficciones'.
-	cart add: aBook.
-	cart add: aBook.
-	self assert: (cart quantityOf: aBook) = 2! !
+	cart add: firstBook.
+	cart add: firstBook.
+	self assert: (cart quantityOf: firstBook) = 2! !
 
-!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 20:39:02'!
+!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 21:01:58'!
 test06ACartDoesNotCountBooksThatWereNotAdded
-	| ficciones juguete rayuela |
-	ficciones _ Book named: 'Ficciones'.
-	juguete _ Book named: 'El Juguete Rabioso'.
-	rayuela _ Book named: 'Rayuela'.
-	cart add: ficciones.
+	cart add: firstBook.
 	cart
-		add: rayuela
+		add: secondBook
 		withAmount: 2.
-	self assert: (cart quantityOf: ficciones) = 1.
-	self assert: (cart quantityOf: juguete) = 0.
-	self assert: (cart quantityOf: rayuela) = 2.! !
+	self assert: (cart quantityOf: firstBook) = 1.
+	self assert: (cart quantityOf: unknownBook) = 0.
+	self assert: (cart quantityOf: secondBook) = 2.! !
+
+!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 21:29:09'!
+test07ACartCantHaveAnUnknownBook
+	self
+		should: [ cart add: unknownBook ] 
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [ :anError |
+			self assert: Cart bookIsNotInCatalogueErrorMessage equals: anError messageText.
+			cart isEmpty ].! !
+
+!CartTest methodsFor: 'testing' stamp: 'DS 6/6/2018 21:32:08'!
+test08ACartCanListItsBooks
+	| aSet |
+	aSet _ Set with: firstBook with: secondBook.
+	cart add: secondBook.
+	cart add: firstBook withAmount: 3.
+	self assert: cart list = aSet! !
 
 
 !classDefinition: #Book category: #'TusLibros.com'!
@@ -79,7 +93,7 @@ named: aString
 
 !classDefinition: #Cart category: #'TusLibros.com'!
 Object subclass: #Cart
-	instanceVariableNames: 'books'
+	instanceVariableNames: 'books catalogue'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros.com'!
@@ -94,6 +108,10 @@ isEmpty
 
 	^books isEmpty ! !
 
+!Cart methodsFor: 'inspecting' stamp: 'DS 6/6/2018 21:31:16'!
+list
+	^Set newFrom: books! !
+
 !Cart methodsFor: 'inspecting' stamp: 'DS 6/6/2018 20:33:28'!
 quantityOf: aBook 
 
@@ -105,14 +123,17 @@ add: aBook
 
 	self add: aBook withAmount: 1! !
 
-!Cart methodsFor: 'accessing' stamp: 'DS 6/6/2018 20:38:32'!
+!Cart methodsFor: 'accessing' stamp: 'DS 6/6/2018 21:28:38'!
 add: aBook withAmount: anAmount
 
+	(catalogue includes: aBook) ifFalse: [ self error: Cart bookIsNotInCatalogueErrorMessage ].
 	books add: aBook withOccurrences: anAmount! !
 
-!Cart methodsFor: 'accessing' stamp: 'DS 6/6/2018 20:33:00'!
-initialize
 
+!Cart methodsFor: 'initializing' stamp: 'DS 6/6/2018 21:27:30'!
+initializeWith: aCatalogue 
+
+	catalogue _ aCatalogue.
 	books _ Bag new.! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
@@ -121,7 +142,51 @@ initialize
 Cart class
 	instanceVariableNames: ''!
 
+!Cart class methodsFor: 'class initialization' stamp: 'DS 6/6/2018 20:50:31'!
+for: aCatalogue 
+
+	^self new initializeWith: aCatalogue! !
+
 !Cart class methodsFor: 'class initialization' stamp: 'DS 6/6/2018 20:03:59'!
+new
+
+	^super new initialize! !
+
+
+!Cart class methodsFor: 'error messages' stamp: 'DS 6/6/2018 21:28:20'!
+bookIsNotInCatalogueErrorMessage
+	^'Book is not in catalogue'! !
+
+
+!classDefinition: #Catalogue category: #'TusLibros.com'!
+Object subclass: #Catalogue
+	instanceVariableNames: 'books'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros.com'!
+
+!Catalogue methodsFor: 'accessing' stamp: 'DS 6/6/2018 20:56:18'!
+add: aBook 
+	books add: aBook! !
+
+
+!Catalogue methodsFor: 'inspecting' stamp: 'DS 6/6/2018 21:27:55'!
+includes: aBook 
+	^books includes: aBook! !
+
+
+!Catalogue methodsFor: 'initializing' stamp: 'DS 6/6/2018 20:57:45'!
+initialize
+
+	books _ Set new! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Catalogue class' category: #'TusLibros.com'!
+Catalogue class
+	instanceVariableNames: ''!
+
+!Catalogue class methodsFor: 'class initialization' stamp: 'DS 6/6/2018 20:56:55'!
 new
 
 	^super new initialize! !
