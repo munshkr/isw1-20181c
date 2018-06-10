@@ -1,22 +1,29 @@
 !classDefinition: #TusLibrosTests category: #'TusLibros-Ejercicio'!
 TestCase subclass: #TusLibrosTests
-	instanceVariableNames: 'aCart catalogWithElements emptyCatalog cartWithEmptyCatalog cartWithElements'
+	instanceVariableNames: 'aCart catalogWithElements emptyCatalog cartWithEmptyCatalog cartWithElements cashierWithFewPrices catalogWithFewerElements validCreditCard invalidCreditCard'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/7/2018 18:12:46'!
+!TusLibrosTests methodsFor: 'setup' stamp: 'f.o. 6/10/2018 19:49:53'!
 setUp
 	catalogWithElements _ Dictionary new.
 	catalogWithElements at: 1 put: 2.
 	catalogWithElements at: 2 put: 1.
 	catalogWithElements at: 3 put: 3.
+	catalogWithFewerElements _ Dictionary new.
+	catalogWithFewerElements at: 1 put: 2.
+	catalogWithFewerElements at: 3 put: 1.
 	emptyCatalog _ Dictionary new.
 	aCart _ Cart withCatalog: catalogWithElements.
 	cartWithEmptyCatalog _ Cart withCatalog: emptyCatalog.
 	cartWithElements _ Cart withCatalog: catalogWithElements.
 	cartWithElements add: 1.
-	cartWithElements add: 2.! !
+	cartWithElements add: 2.
+	
+	validCreditCard _ CreditCard new withNumber: 123456789 withName: 'pepe' withExpirationMonth: Month current next.
+	cashierWithFewPrices _ Cashier new initializeWithPriceList: catalogWithFewerElements.! !
+
 
 !TusLibrosTests methodsFor: 'Cart' stamp: 'f.o. 6/6/2018 21:39:42'!
 test01ACartIsInitializeEmpty
@@ -83,6 +90,40 @@ test09ACartCantAddThingsThatAreNotInTheCatalog
 		withExceptionDo: [ :anError |
 			anError messageText = 'No pertenece al catalogo'.
 			self assert: cartWithEmptyCatalog isEmpty ].! !
+
+
+!TusLibrosTests methodsFor: 'CreditCard' stamp: 'f.o. 6/10/2018 19:26:39'!
+test01CreditCardCantBeCreatedInvalid
+
+	|invalidDate|
+	
+	invalidDate := GregorianMonthOfYear new initializeYear: (Year current previous ) month: February.
+	
+	self
+		should: [ CreditCard new withNumber: 123456789 withName: 'pepe' withExpirationMonth: invalidDate]
+		raise: Error
+		withExceptionDo: [ :anError |
+			anError messageText = 'La tarjeta de crédito está vencida'].! !
+
+
+!TusLibrosTests methodsFor: 'Cashier' stamp: 'f.o. 6/10/2018 19:43:44'!
+test01CashierCantCheckOutWithOutEveryPrice
+
+	
+	self
+		should: [cashierWithFewPrices checkout: cartWithElements on: Date today with: validCreditCard ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			anError messageText = 'La lista de precio no incluye todos los elementos del carrito'].! !
+
+!TusLibrosTests methodsFor: 'Cashier' stamp: 'f.o. 6/10/2018 19:51:51'!
+test02CashierCantCheckOutWithOutdatedCreditCard
+
+	self
+		should: [cashierWithFewPrices checkout: cartWithElements on: (Date today year next) with: validCreditCard ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			anError messageText = 'La tarjeta de crédito está vencida'].! !
 
 
 !classDefinition: #Cart category: #'TusLibros-Ejercicio'!
@@ -162,3 +203,90 @@ CuantityMustBeNaturalNumber
 !Cart class methodsFor: 'as yet unclassified' stamp: 'f.o. 6/7/2018 03:01:55'!
 withCatalog: anOrderedCollection 
 	^ self new withCatalog: anOrderedCollection! !
+
+
+!classDefinition: #Cashier category: #'TusLibros-Ejercicio'!
+Object subclass: #Cashier
+	instanceVariableNames: 'priceList'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Ejercicio'!
+
+!Cashier methodsFor: 'initialize' stamp: 'f.o. 6/10/2018 17:24:15'!
+initializeWithPriceList: aPriceList
+
+	priceList := aPriceList .! !
+
+
+!Cashier methodsFor: 'checkout' stamp: 'f.o. 6/10/2018 18:49:00'!
+checkout: aCart on: aDate with: aCreditCard
+
+	|cost|
+	self assert: (aCreditCard isExpiredOn: aDate) not description: [ self error: CreditCard expiredError ].
+	self assert: (self hasPricesForEveryBookIn: aCart) description: [self error: Cashier priceListError].
+	
+	cost := 0.
+	(aCart products) do:[:element | 	cost := cost + (priceList at: element)].
+	
+	"cobrar el carrito. "! !
+
+
+!Cashier methodsFor: 'testing' stamp: 'f.o. 6/10/2018 18:48:25'!
+hasPricesForEveryBookIn: aCart
+
+	| hasPrice | 
+	hasPrice := True.
+	
+	(aCart products) do:[:element | hasPrice := hasPrice and: (priceList includesKey: element)].
+						
+	^hasPrice.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Cashier class' category: #'TusLibros-Ejercicio'!
+Cashier class
+	instanceVariableNames: 'priceList'!
+
+!Cashier class methodsFor: 'error message' stamp: 'f.o. 6/10/2018 18:45:17'!
+priceListError
+
+	^'La lista de precio no incluye todos los elementos del carrito'.! !
+
+
+!Cashier class methodsFor: 'initialize' stamp: 'f.o. 6/10/2018 17:30:48'!
+withPriceList: aPriceList
+
+	^ self new initializeWithPriceList: aPriceList.! !
+
+
+!classDefinition: #CreditCard category: #'TusLibros-Ejercicio'!
+Object subclass: #CreditCard
+	instanceVariableNames: 'cardNumber cardHolder expirationMonth'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Ejercicio'!
+
+!CreditCard methodsFor: 'testing' stamp: 'f.o. 6/10/2018 17:16:29'!
+isExpiredOn: aDate 
+	
+	^expirationMonth start < (Month month: aDate monthIndex year: aDate yearNumber) start ! !
+
+
+!CreditCard methodsFor: 'initialization' stamp: 'f.o. 6/10/2018 18:54:18'!
+withNumber: acardNumber withName: acardHolder withExpirationMonth: amonthOfYear
+
+	cardNumber _ acardNumber.
+	cardHolder _ acardHolder.
+	expirationMonth _ amonthOfYear.
+	self assert: (self isExpiredOn: Date today) not description: [ self error: CreditCard expiredError ].! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'CreditCard class' category: #'TusLibros-Ejercicio'!
+CreditCard class
+	instanceVariableNames: ''!
+
+!CreditCard class methodsFor: 'error messages' stamp: 'f.o. 6/10/2018 18:42:07'!
+expiredError
+
+	^'La tarjeta de crédito está vencida'.! !
