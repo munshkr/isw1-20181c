@@ -5,7 +5,7 @@ TestCase subclass: #TusLibrosTests
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!TusLibrosTests methodsFor: 'setup' stamp: 'DS 6/17/2018 13:44:16'!
+!TusLibrosTests methodsFor: 'setup' stamp: 'DS 6/17/2018 15:03:20'!
 setUp
 	catalogWithElements _ Dictionary new.
 	catalogWithElements at: 1 put: 2.
@@ -24,9 +24,9 @@ setUp
 	cartWithElements add: 2.
 	emptyCart _ Cart withCatalog: catalogWithElements.
 	
-	validCreditCard _ CreditCard new withNumber: 123456789 withName: 'pepe' withExpirationMonth: Month current next.
-	validCreditCard2 _ CreditCard new withNumber: 123456790 withName: 'juan' withExpirationMonth: Month current next.
-	invalidCreditCard _ CreditCard new withNumber: 123456790 withName: 'pepe' withExpirationMonth: Month current next.
+	validCreditCard _ CreditCard new withNumber: 123456789 withName: 'pepe' withExpirationMonth: GregorianMonthOfYear current next.
+	validCreditCard2 _ CreditCard new withNumber: 123456790 withName: 'juan' withExpirationMonth: GregorianMonthOfYear current next.
+	invalidCreditCard _ CreditCard new withNumber: 123456790 withName: 'pepe' withExpirationMonth: GregorianMonthOfYear current next.
 	validCards _ Dictionary new.
 	validCards at: validCreditCard put: 2000.
 	validCards at: validCreditCard2 put: 3.
@@ -116,10 +116,10 @@ test10CanNotAddGreaterQuantityThanStock
 			self assert: cartWithEmptyCatalog isEmpty ].! !
 
 
-!TusLibrosTests methodsFor: 'CreditCard tests' stamp: 'DS 6/17/2018 13:40:28'!
+!TusLibrosTests methodsFor: 'CreditCard tests' stamp: 'DS 6/17/2018 15:43:11'!
 test11CreditCardCantBeCreatedInvalid
 	| invalidDate |
-	invalidDate _ GregorianMonthOfYear year: Year current previous month: February.
+	invalidDate _ GregorianMonthOfYear year: GregorianYear current previous month: February.
 	self
 		should: [
 			CreditCard new
@@ -131,25 +131,25 @@ test11CreditCardCantBeCreatedInvalid
 			self assert: anError messageText = 'La tarjeta de crédito está vencida' ].! !
 
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:31:01'!
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 15:43:28'!
 test12CashierCantCheckOutWithOutEveryPrice
 	self
 		should: [
 			cashierWithFewPrices
 				checkout: cartWithElements
-				on: Date today
+				on: FixedGregorianDate today
 				with: validCreditCard ]
 		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = 'La lista de precio no incluye todos los elementos del carrito' ]! !
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:31:04'!
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 15:45:21'!
 test13CashierCantCheckOutWithOutdatedCreditCard
 	self
 		should: [
 			cashierWithFewPrices
 				checkout: cartWithElements
-				on: Date today year next
+				on: GregorianYear current next firstDate
 				with: validCreditCard ]
 		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
@@ -185,16 +185,22 @@ test19MerchantRecognicesInvalidCards
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = 'La tarjeta de crédito provista es inexistente. Revise los datos ingresados.' ].! !
 
-!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'DS 6/17/2018 13:31:18'!
+!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'DS 6/17/2018 15:49:30'!
 test20MerchantRecognicesWhenCardDontHaveEnoughMoney
 	aCart
 		add: 1
 		quantity: 2.
+		
+cashierWithPrices
+				checkout: aCart
+				on: FixedGregorianDate today
+				with: validCreditCard2 .		
+		
 	self
 		should: [
 			cashierWithPrices
 				checkout: aCart
-				on: Date today
+				on: FixedGregorianDate today
 				with: validCreditCard2 ]
 		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
@@ -312,7 +318,7 @@ initializeWithPriceList: aPriceList andMerchant: aMerchantProcessor registeringO
 	salesBook := aSalesBook.! !
 
 
-!Cashier methodsFor: 'checkout' stamp: 'f.o. 6/17/2018 12:32:34'!
+!Cashier methodsFor: 'checkout' stamp: 'DS 6/17/2018 15:50:53'!
 checkout: aCart on: aDate with: aCreditCard
 
 	| cost |
@@ -320,11 +326,10 @@ checkout: aCart on: aDate with: aCreditCard
 	self assertCreditCardIsNotExpired: aCreditCard onDate: aDate .
 	self assertHasPricesForEveryBookIn: aCart.
 	
-	self assert: aCart isEmpty description: [self error: 'El carrito no puede estar vacio'].
+	self assert: (aCart isEmpty not)
+		description: [ self error: 'El carrito no puede estar vacio' ].
 	
-	cost _ (aCart products) inject: 0 into: [:product | priceList at: product]. "puede q haya un error en esta linea"
-	
-	"cobrar el carrito. "
+	cost _ (aCart products collect: [:product | priceList at: product]) sum.
 	
 	merchant checkout: aCreditCard withAmount: cost.
 	salesBook add: (Sale ofValue: cost from: aCreditCard owner).! !
@@ -370,19 +375,19 @@ Object subclass: #CreditCard
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!CreditCard methodsFor: 'testing' stamp: 'DS 6/17/2018 13:44:00'!
+!CreditCard methodsFor: 'testing' stamp: 'DS 6/17/2018 15:40:36'!
 isExpiredOn: aDate 
 	
-	^expirationMonth start < (Month month: aDate monthIndex year: aDate yearNumber) start! !
+	^expirationMonth firstDate < aDate! !
 
 
-!CreditCard methodsFor: 'initialization' stamp: 'f.o. 6/10/2018 18:54:18'!
+!CreditCard methodsFor: 'initialization' stamp: 'DS 6/17/2018 15:36:10'!
 withNumber: acardNumber withName: acardHolder withExpirationMonth: amonthOfYear
 
 	cardNumber _ acardNumber.
 	cardHolder _ acardHolder.
 	expirationMonth _ amonthOfYear.
-	self assert: (self isExpiredOn: Date today) not description: [ self error: CreditCard expiredError ].! !
+	self assert: (self isExpiredOn: FixedGregorianDate today) not description: [ self error: CreditCard expiredError ].! !
 
 
 !CreditCard methodsFor: 'accessing' stamp: 'f.o. 6/14/2018 01:59:21'!
@@ -425,13 +430,13 @@ initializeWithBankInfo: accountsInfo
 	validCreditCards _ accountsInfo.! !
 
 
-!MerchantProcessorSim methodsFor: 'checkout' stamp: 'f.o. 6/14/2018 02:47:00'!
+!MerchantProcessorSim methodsFor: 'checkout' stamp: 'DS 6/17/2018 15:51:21'!
 checkout: creditCard withAmount: anAmount
 
 	self isValid: creditCard .
-	self assert: (validCreditCards at: creditCard <= anAmount) description: [self error: MerchantProcessorSim insufficientCredit].
+	self assert: ((validCreditCards at: creditCard) <= anAmount) description: [self error: MerchantProcessorSim insufficientCredit].
 	
-	validCreditCards at: creditCard put: (validCreditCards at: creditCard  - anAmount).! !
+	validCreditCards at: creditCard put: ((validCreditCards at: creditCard) - anAmount).! !
 
 
 !MerchantProcessorSim methodsFor: 'testing' stamp: 'f.o. 6/14/2018 02:51:42'!
