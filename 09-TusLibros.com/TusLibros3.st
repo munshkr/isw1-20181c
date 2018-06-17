@@ -167,9 +167,14 @@ test14CanNotCheckoutAnEmptyCart
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = 'El carrito no puede estar vacio' ].! !
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:15:42'!
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 16:37:40'!
 test15CalculatedTotalIsCorrect
-	^ self.! !
+	|total|
+	total _ cashierWithPrices
+		checkout: cartWithElements
+		on: FixedGregorianDate today
+		with: validCreditCard.
+	self assert: total = (2+1)! !
 
 !TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:15:52'!
 test16CheckoutRegistersASale
@@ -321,7 +326,7 @@ initializeWithPriceList: aPriceList andMerchant: aMerchantProcessor registeringO
 	salesBook := aSalesBook.! !
 
 
-!Cashier methodsFor: 'checkout' stamp: 'DS 6/17/2018 15:52:29'!
+!Cashier methodsFor: 'checkout' stamp: 'DS 6/17/2018 16:36:08'!
 checkout: aCart on: aDate with: aCreditCard
 
 	| cost |
@@ -335,7 +340,9 @@ checkout: aCart on: aDate with: aCreditCard
 	cost _ (aCart products collect: [:product | priceList at: product]) sum.
 	
 	merchant checkout: aCreditCard withAmount: cost.
-	salesBook add: (Sale ofValue: cost from: aCreditCard cardOwner).! !
+	salesBook add: (Sale ofValue: cost from: aCreditCard cardOwner).
+	
+	^cost! !
 
 
 !Cashier methodsFor: 'testing' stamp: 'f.o. 6/17/2018 12:30:42'!
