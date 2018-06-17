@@ -185,16 +185,11 @@ test19MerchantRecognicesInvalidCards
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = 'La tarjeta de crédito provista es inexistente. Revise los datos ingresados.' ].! !
 
-!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'DS 6/17/2018 15:49:30'!
+!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'DS 6/17/2018 15:52:39'!
 test20MerchantRecognicesWhenCardDontHaveEnoughMoney
 	aCart
 		add: 1
 		quantity: 2.
-		
-cashierWithPrices
-				checkout: aCart
-				on: FixedGregorianDate today
-				with: validCreditCard2 .		
 		
 	self
 		should: [
@@ -318,7 +313,7 @@ initializeWithPriceList: aPriceList andMerchant: aMerchantProcessor registeringO
 	salesBook := aSalesBook.! !
 
 
-!Cashier methodsFor: 'checkout' stamp: 'DS 6/17/2018 15:50:53'!
+!Cashier methodsFor: 'checkout' stamp: 'DS 6/17/2018 15:52:29'!
 checkout: aCart on: aDate with: aCreditCard
 
 	| cost |
@@ -332,7 +327,7 @@ checkout: aCart on: aDate with: aCreditCard
 	cost _ (aCart products collect: [:product | priceList at: product]) sum.
 	
 	merchant checkout: aCreditCard withAmount: cost.
-	salesBook add: (Sale ofValue: cost from: aCreditCard owner).! !
+	salesBook add: (Sale ofValue: cost from: aCreditCard cardOwner).! !
 
 
 !Cashier methodsFor: 'testing' stamp: 'f.o. 6/17/2018 12:30:42'!
@@ -430,11 +425,12 @@ initializeWithBankInfo: accountsInfo
 	validCreditCards _ accountsInfo.! !
 
 
-!MerchantProcessorSim methodsFor: 'checkout' stamp: 'DS 6/17/2018 15:51:21'!
+!MerchantProcessorSim methodsFor: 'checkout' stamp: 'DS 6/17/2018 16:14:11'!
 checkout: creditCard withAmount: anAmount
 
 	self isValid: creditCard .
-	self assert: ((validCreditCards at: creditCard) <= anAmount) description: [self error: MerchantProcessorSim insufficientCredit].
+	self assert: ((validCreditCards at: creditCard) >= anAmount)
+		description: [self error: MerchantProcessorSim insufficientCredit].
 	
 	validCreditCards at: creditCard put: ((validCreditCards at: creditCard) - anAmount).! !
 
