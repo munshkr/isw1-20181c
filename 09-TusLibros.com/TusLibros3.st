@@ -155,9 +155,17 @@ test13CashierCantCheckOutWithOutdatedCreditCard
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = 'La tarjeta de crédito está vencida' ].! !
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:29:06'!
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 16:17:00'!
 test14CanNotCheckoutAnEmptyCart
-	^self! !
+	self
+		should: [
+			cashierWithPrices
+				checkout: emptyCart
+				on: FixedGregorianDate today
+				with: validCreditCard ]
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = 'El carrito no puede estar vacio' ].! !
 
 !TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:15:42'!
 test15CalculatedTotalIsCorrect
