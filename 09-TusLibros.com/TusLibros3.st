@@ -1,68 +1,11 @@
-!classDefinition: #MerchantProcessorSim category: #'TusLibros-Ejercicio'!
-TestCase subclass: #MerchantProcessorSim
-	instanceVariableNames: 'validCreditCards'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'TusLibros-Ejercicio'!
-
-!MerchantProcessorSim methodsFor: 'initialization' stamp: 'f.o. 6/14/2018 01:34:19'!
-initializeWithBankInfo: accountsInfo
-	
-	validCreditCards _ accountsInfo.! !
-
-
-!MerchantProcessorSim methodsFor: 'checkout' stamp: 'f.o. 6/14/2018 02:28:34'!
-balanceOfCard: aCard
-	
-	^ validCreditCards at: aCard .
-	
-	"no creo q esto lo deba responder un merchant, aunq nos serviria para los tests"! !
-
-!MerchantProcessorSim methodsFor: 'checkout' stamp: 'f.o. 6/14/2018 02:47:00'!
-checkout: creditCard withAmount: anAmount
-
-	self isValid: creditCard .
-	self assert: (validCreditCards at: creditCard <= anAmount) description: [self error: MerchantProcessorSim insufficientCredit].
-	
-	validCreditCards at: creditCard put: (validCreditCards at: creditCard  - anAmount).! !
-
-
-!MerchantProcessorSim methodsFor: 'testing' stamp: 'f.o. 6/14/2018 02:51:42'!
-isValid: aCreditCard
-
-	self assert: (validCreditCards includesKey: aCreditCard) description: [self error: MerchantProcessorSim invalidCreditCard].! !
-
-"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
-
-!classDefinition: 'MerchantProcessorSim class' category: #'TusLibros-Ejercicio'!
-MerchantProcessorSim class
-	instanceVariableNames: ''!
-
-!MerchantProcessorSim class methodsFor: 'initialization' stamp: 'f.o. 6/14/2018 01:35:35'!
-withBankInfo: accountsInfo
-	
-	^MerchantProcessorSim new initializeWithBankInfo: accountsInfo.! !
-
-
-!MerchantProcessorSim class methodsFor: 'errors' stamp: 'f.o. 6/14/2018 02:49:05'!
-insufficientCredit
-
-	^'El saldo es insuficiente'.! !
-
-!MerchantProcessorSim class methodsFor: 'errors' stamp: 'f.o. 6/14/2018 02:48:55'!
-invalidCreditCard
-
-	^'La tarjeta de crédito provista es inexistente. Revise los datos ingresados.'.! !
-
-
 !classDefinition: #TusLibrosTests category: #'TusLibros-Ejercicio'!
 TestCase subclass: #TusLibrosTests
-	instanceVariableNames: 'aCart catalogWithElements emptyCatalog cartWithEmptyCatalog cartWithElements cashierWithFewPrices catalogWithFewerElements validCreditCard invalidCreditCard validCards aMerchant cartWithoutElements cashierWithPrices validCreditCard2'
+	instanceVariableNames: 'aCart catalogWithElements emptyCatalog cartWithEmptyCatalog cartWithElements cashierWithFewPrices catalogWithFewerElements validCreditCard invalidCreditCard validCards aMerchant cartWithoutElements cashierWithPrices validCreditCard2 aSalesBook'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!TusLibrosTests methodsFor: 'setup' stamp: 'f.o. 6/14/2018 02:56:12'!
+!TusLibrosTests methodsFor: 'setup' stamp: 'f.o. 6/17/2018 11:41:42'!
 setUp
 	catalogWithElements _ Dictionary new.
 	catalogWithElements at: 1 put: 2.
@@ -89,8 +32,10 @@ setUp
 	
 	aMerchant _ MerchantProcessorSim withBankInfo: validCards .
 	
-	cashierWithFewPrices _ Cashier new initializeWithPriceList: catalogWithFewerElements andMerchant: aMerchant.
-	cashierWithPrices _ Cashier new initializeWithPriceList: catalogWithElements andMerchant: aMerchant.! !
+	aSalesBook _ OrderedCollection new.
+	
+	cashierWithFewPrices _ Cashier new initializeWithPriceList: catalogWithFewerElements andMerchant: aMerchant registeringOn: aSalesBook.
+	cashierWithPrices _ Cashier new initializeWithPriceList: catalogWithElements andMerchant: aMerchant registeringOn: aSalesBook.! !
 
 
 !TusLibrosTests methodsFor: 'Cart tests' stamp: 'f.o. 6/14/2018 02:50:26'!
@@ -143,12 +88,12 @@ test07CanNotAddGreaterQuantityThanStockAtOnce
 			anError messageText = 'No hay tantos productos'.
 			self assert: cartWithEmptyCatalog isEmpty ].! !
 
-!TusLibrosTests methodsFor: 'Cart tests' stamp: 'f.o. 6/7/2018 18:14:05'!
+!TusLibrosTests methodsFor: 'Cart tests' stamp: 'f.o. 6/17/2018 10:46:58'!
 test08ACartKnowHowManyElementsHasOfEachElement
 	aCart add: 1 quantity: 2.
 	aCart add: 3 quantity: 3.
-	self assert: (aCart quantityOf: 1 ) = 2.
-	self assert: (aCart quantityOf: 3 ) = 3.! !
+	self assert: (aCart occurrencesOf: 1 ) = 2.
+	self assert: (aCart occurrencesOf: 3 ) = 3.! !
 
 !TusLibrosTests methodsFor: 'Cart tests' stamp: 'f.o. 6/7/2018 18:17:00'!
 test09ACartCantAddThingsThatAreNotInTheCatalog
@@ -186,6 +131,18 @@ test10CreditCardCantBeCreatedInvalid
 		withExceptionDo: [ :anError |
 			anError messageText = 'La tarjeta de crédito está vencida' ].! !
 
+
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'f.o. 6/17/2018 12:26:27'!
+test01CanNotCheckoutAnEmptyCart! !
+
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'f.o. 6/17/2018 12:26:40'!
+test02CalculatedTotalIsCorrect! !
+
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'f.o. 6/17/2018 12:26:51'!
+test04CheckoutRegistersASale! !
+
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'f.o. 6/17/2018 12:27:20'!
+test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit! !
 
 !TusLibrosTests methodsFor: 'Cashier tests' stamp: 'f.o. 6/14/2018 02:11:03'!
 test11CashierCantCheckOutWithOutEveryPrice
@@ -257,50 +214,59 @@ withCatalog: anOrderedCollection
 	! !
 
 
+!Cart methodsFor: 'testing' stamp: 'f.o. 6/17/2018 11:57:17'!
+assertIsANaturalNumber: aNumber
+
+	self assert: aNumber isInteger description: [self error: Cart cuantityMustBeNaturalNumber].
+	self assert:  aNumber  > 0 description: [self error: Cart cuantityMustBeNaturalNumber].! !
+
+!Cart methodsFor: 'testing' stamp: 'f.o. 6/17/2018 12:01:24'!
+assertIsCorrectToAdd: anElement times: aQuantity
+
+	self assert: (catalog includesKey: anElement) description: [self error: Cart doesNotBelongToCatalog].
+	
+	"No puede superar la cantidad que hay en stock"
+	self assert: (((catalog at: anElement) + (elements occurrencesOf: anElement)) >= aQuantity) description: [self error: Cart notSoManyProducts].! !
+
+
 !Cart methodsFor: 'adding' stamp: 'f.o. 6/7/2018 03:02:59'!
 add: anElement
 	self add: anElement quantity: 1.
 ! !
 
-!Cart methodsFor: 'adding' stamp: 'f.o. 6/14/2018 01:24:45'!
+!Cart methodsFor: 'adding' stamp: 'f.o. 6/17/2018 12:01:11'!
 add: anElement quantity: aQuantity 
-	self assert: aQuantity isInteger description: [self error: 'La cantidad debe ingresar un natural mayor o igual a 1'].
-	self assert:  aQuantity  > 0 description: [self error: 'La cantidad debe ingresar un natural mayor o igual a 1'].
 	
-	self assert: (catalog includesKey: anElement) description: [self error: 'No pertenece al catalogo'].
-	self assert: (((catalog at: anElement) + (elements occurrencesOf: anElement)) >= aQuantity) description: [self error: 'No hay tantos productos'].
+	self assertIsANaturalNumber: aQuantity.
+	self assertIsCorrectToAdd: anElement times: aQuantity .
 	
 	elements add: anElement withOccurrences: aQuantity.
-	
-	
-	
-	"No puede superar la cantidad que hay en stock"! !
+	! !
 
 
 !Cart methodsFor: 'accessing' stamp: 'f.o. 6/7/2018 03:04:35'!
 catalog
 	^ catalog! !
 
-!Cart methodsFor: 'accessing' stamp: 'f.o. 6/7/2018 03:04:44'!
-contents: anElement
-		^ elements includes: anElement .! !
-
 !Cart methodsFor: 'accessing' stamp: 'f.o. 6/7/2018 03:04:52'!
 elements
 	^ elements size! !
+
+!Cart methodsFor: 'accessing' stamp: 'f.o. 6/17/2018 10:40:04'!
+includes: anElement
+	^ elements includes: anElement.! !
 
 !Cart methodsFor: 'accessing' stamp: 'f.o. 6/7/2018 03:05:00'!
 isEmpty
 	^ elements isEmpty .! !
 
+!Cart methodsFor: 'accessing' stamp: 'f.o. 6/17/2018 10:45:42'!
+occurrencesOf: anElement
+	^ elements occurrencesOf: anElement.! !
+
 !Cart methodsFor: 'accessing' stamp: 'f.o. 6/7/2018 03:05:10'!
 products 
 	^ elements! !
-
-!Cart methodsFor: 'accessing' stamp: 'f.o. 6/7/2018 03:05:17'!
-quantityOf: anElement
-	^ elements occurrencesOf: anElement
-	! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -308,9 +274,17 @@ quantityOf: anElement
 Cart class
 	instanceVariableNames: ''!
 
-!Cart class methodsFor: 'errors' stamp: 'f.o. 6/7/2018 03:15:58'!
-CuantityMustBeNaturalNumber
-^'Debe ingresar un natural mayor o igual a 1'! !
+!Cart class methodsFor: 'errors' stamp: 'f.o. 6/17/2018 11:51:00'!
+cuantityMustBeNaturalNumber
+	^ 'Debe ingresar un natural mayor o igual a 1'.! !
+
+!Cart class methodsFor: 'errors' stamp: 'f.o. 6/17/2018 11:52:36'!
+doesNotBelongToCatalog
+	^ 'No pertenece al catalogo'.! !
+
+!Cart class methodsFor: 'errors' stamp: 'f.o. 6/17/2018 11:53:29'!
+notSoManyProducts
+	^ 'No hay tantos productos'.! !
 
 
 !Cart class methodsFor: 'class initialization' stamp: 'f.o. 6/7/2018 03:01:55'!
@@ -320,32 +294,46 @@ withCatalog: anOrderedCollection
 
 !classDefinition: #Cashier category: #'TusLibros-Ejercicio'!
 Object subclass: #Cashier
-	instanceVariableNames: 'priceList merchant'
+	instanceVariableNames: 'priceList merchant salesBook'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!Cashier methodsFor: 'initialization' stamp: 'f.o. 6/14/2018 01:30:06'!
-initializeWithPriceList: aPriceList andMerchant: aMerchantProcessor
+!Cashier methodsFor: 'initialization' stamp: 'f.o. 6/17/2018 11:32:15'!
+initializeWithPriceList: aPriceList andMerchant: aMerchantProcessor registeringOn: aSalesBook
 
 	priceList := aPriceList .
-	merchant := aMerchantProcessor.! !
+	merchant := aMerchantProcessor.
+	salesBook := aSalesBook.! !
 
 
-!Cashier methodsFor: 'checkout' stamp: 'f.o. 6/14/2018 02:10:46'!
+!Cashier methodsFor: 'checkout' stamp: 'f.o. 6/17/2018 12:32:34'!
 checkout: aCart on: aDate with: aCreditCard
 
 	| cost |
 	
-	self assert: (aCreditCard isExpiredOn: aDate) not description: [ self error: CreditCard expiredError ].
-	self assert: (self hasPricesForEveryBookIn: aCart) description: [self error: Cashier priceListError].
+	self assertCreditCardIsNotExpired: aCreditCard onDate: aDate .
+	self assertHasPricesForEveryBookIn: aCart.
+	
+	self assert: aCart isEmpty description: [self error: 'El carrito no puede estar vacio'].
 	
 	cost _ (aCart products) inject: 0 into: [:product | priceList at: product]. "puede q haya un error en esta linea"
 	
 	"cobrar el carrito. "
 	
-	merchant checkout: aCreditCard withAmount: cost.! !
+	merchant checkout: aCreditCard withAmount: cost.
+	salesBook add: (Sale ofValue: cost from: aCreditCard owner).! !
 
+
+!Cashier methodsFor: 'testing' stamp: 'f.o. 6/17/2018 12:30:42'!
+assertCreditCardIsNotExpired: aCreditCard onDate: aDate
+
+	self assert: (aCreditCard isExpiredOn: aDate) not description: [ self error: CreditCard expiredError ].! !
+
+!Cashier methodsFor: 'testing' stamp: 'f.o. 6/17/2018 12:31:10'!
+assertHasPricesForEveryBookIn: aCart
+
+	self assert: (self hasPricesForEveryBookIn: aCart) description: [self error: Cashier priceListError].! !
 
 !Cashier methodsFor: 'testing' stamp: 'DS 6/11/2018 15:06:32'!
 hasPricesForEveryBookIn: aCart
@@ -417,3 +405,77 @@ CreditCard class
 expiredError
 
 	^'La tarjeta de crédito está vencida'.! !
+
+
+!classDefinition: #MerchantProcessorSim category: #'TusLibros-Ejercicio'!
+Object subclass: #MerchantProcessorSim
+	instanceVariableNames: 'validCreditCards'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Ejercicio'!
+
+!MerchantProcessorSim methodsFor: 'initialization' stamp: 'f.o. 6/14/2018 01:34:19'!
+initializeWithBankInfo: accountsInfo
+	
+	validCreditCards _ accountsInfo.! !
+
+
+!MerchantProcessorSim methodsFor: 'checkout' stamp: 'f.o. 6/14/2018 02:47:00'!
+checkout: creditCard withAmount: anAmount
+
+	self isValid: creditCard .
+	self assert: (validCreditCards at: creditCard <= anAmount) description: [self error: MerchantProcessorSim insufficientCredit].
+	
+	validCreditCards at: creditCard put: (validCreditCards at: creditCard  - anAmount).! !
+
+
+!MerchantProcessorSim methodsFor: 'testing' stamp: 'f.o. 6/14/2018 02:51:42'!
+isValid: aCreditCard
+
+	self assert: (validCreditCards includesKey: aCreditCard) description: [self error: MerchantProcessorSim invalidCreditCard].! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'MerchantProcessorSim class' category: #'TusLibros-Ejercicio'!
+MerchantProcessorSim class
+	instanceVariableNames: ''!
+
+!MerchantProcessorSim class methodsFor: 'initialization' stamp: 'f.o. 6/14/2018 01:35:35'!
+withBankInfo: accountsInfo
+	
+	^MerchantProcessorSim new initializeWithBankInfo: accountsInfo.! !
+
+
+!MerchantProcessorSim class methodsFor: 'errors' stamp: 'f.o. 6/14/2018 02:49:05'!
+insufficientCredit
+
+	^'El saldo es insuficiente'.! !
+
+!MerchantProcessorSim class methodsFor: 'errors' stamp: 'f.o. 6/14/2018 02:48:55'!
+invalidCreditCard
+
+	^'La tarjeta de crédito provista es inexistente. Revise los datos ingresados.'.! !
+
+
+!classDefinition: #Sale category: #'TusLibros-Ejercicio'!
+Object subclass: #Sale
+	instanceVariableNames: 'value owner'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'TusLibros-Ejercicio'!
+
+!Sale methodsFor: 'as yet unclassified' stamp: 'f.o. 6/17/2018 11:45:40'!
+registerWithValue: aValue from: aName
+
+	value := aValue.
+	owner := aName.! !
+
+"-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
+
+!classDefinition: 'Sale class' category: #'TusLibros-Ejercicio'!
+Sale class
+	instanceVariableNames: ''!
+
+!Sale class methodsFor: 'as yet unclassified' stamp: 'f.o. 6/17/2018 11:44:51'!
+ofValue: aValue from: aName
+	^Sale new registerWithValue: aValue from: aName.! !
