@@ -1,11 +1,11 @@
 !classDefinition: #TusLibrosTests category: #'TusLibros-Ejercicio'!
 TestCase subclass: #TusLibrosTests
-	instanceVariableNames: 'aCart catalogWithElements emptyCatalog cartWithEmptyCatalog cartWithElements cashierWithFewPrices catalogWithFewerElements validCreditCard invalidCreditCard validCards aMerchant cartWithoutElements cashierWithPrices validCreditCard2 aSalesBook emptyCart'
+	instanceVariableNames: 'aCart catalogWithElements emptyCatalog cartWithEmptyCatalog cartWithElements cashierWithFewPrices catalogWithFewerElements validCreditCard invalidCreditCard validCards aMerchant cartWithoutElements cashierWithPrices validCreditCard2 aSalesBook emptyCart cartWithMoreElements'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!TusLibrosTests methodsFor: 'setup' stamp: 'DS 6/17/2018 15:03:20'!
+!TusLibrosTests methodsFor: 'setup' stamp: 'DS 6/17/2018 16:51:12'!
 setUp
 	catalogWithElements _ Dictionary new.
 	catalogWithElements at: 1 put: 2.
@@ -23,6 +23,10 @@ setUp
 	cartWithElements add: 1.
 	cartWithElements add: 2.
 	emptyCart _ Cart withCatalog: catalogWithElements.
+	cartWithMoreElements _ Cart withCatalog: catalogWithElements.
+	cartWithMoreElements add: 1.
+	cartWithMoreElements add: 2.
+	cartWithMoreElements add: 3.
 	
 	validCreditCard _ CreditCard new withNumber: 123456789 withName: 'pepe' withExpirationMonth: GregorianMonthOfYear current next.
 	validCreditCard2 _ CreditCard new withNumber: 123456790 withName: 'juan' withExpirationMonth: GregorianMonthOfYear current next.
@@ -190,9 +194,19 @@ test16CashierRegistersASaleOnCheckout
 	self assert: (lastSale value = total).
 	self assert: (lastSale owner = validCreditCard cardOwner)! !
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 16:39:27'!
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 16:52:07'!
 test17CashierDoesNotRegisterSaleWhenTheCreditCardHasNoCredit
-	^ self.! !
+	self
+		should: [
+			cashierWithPrices
+				checkout: cartWithMoreElements 
+				on: FixedGregorianDate today
+				with: validCreditCard2 ]
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = 'El saldo es insuficiente' ].
+		
+	self assert: cashierWithPrices salesBook isEmpty ! !
 
 
 !TusLibrosTests methodsFor: 'Merchant tests' stamp: 'DS 6/17/2018 13:17:17'!
