@@ -1,11 +1,11 @@
 !classDefinition: #TusLibrosTests category: #'TusLibros-Ejercicio'!
 TestCase subclass: #TusLibrosTests
-	instanceVariableNames: 'aCart catalogWithElements emptyCatalog cartWithEmptyCatalog cartWithElements cashierWithFewPrices catalogWithFewerElements validCreditCard invalidCreditCard validCards aMerchant cartWithoutElements cashierWithPrices validCreditCard2 aSalesBook'
+	instanceVariableNames: 'aCart catalogWithElements emptyCatalog cartWithEmptyCatalog cartWithElements cashierWithFewPrices catalogWithFewerElements validCreditCard invalidCreditCard validCards aMerchant cartWithoutElements cashierWithPrices validCreditCard2 aSalesBook emptyCart'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!TusLibrosTests methodsFor: 'setup' stamp: 'f.o. 6/17/2018 11:41:42'!
+!TusLibrosTests methodsFor: 'setup' stamp: 'DS 6/17/2018 13:44:16'!
 setUp
 	catalogWithElements _ Dictionary new.
 	catalogWithElements at: 1 put: 2.
@@ -22,6 +22,7 @@ setUp
 	cartWithElements _ Cart withCatalog: catalogWithElements.
 	cartWithElements add: 1.
 	cartWithElements add: 2.
+	emptyCart _ Cart withCatalog: catalogWithElements.
 	
 	validCreditCard _ CreditCard new withNumber: 123456789 withName: 'pepe' withExpirationMonth: Month current next.
 	validCreditCard2 _ CreditCard new withNumber: 123456790 withName: 'juan' withExpirationMonth: Month current next.
@@ -64,28 +65,28 @@ test05ACartWithAQuantityOfOneElementCountsGood
 	aCart add: 2.
 	self assert: aCart elements = 3! !
 
-!TusLibrosTests methodsFor: 'Cart tests' stamp: 'f.o. 6/7/2018 18:16:08'!
+!TusLibrosTests methodsFor: 'Cart tests' stamp: 'DS 6/17/2018 13:30:08'!
 test06CanNotAddNonNaturalNumberOfItems
 	self
 		should: [
 			aCart
 				add: 1
 				quantity: 0 ]
-		raise: Error
+		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			anError messageText = 'La cantidad debe ingresar un natural mayor o igual a 1'.
+			self assert: anError messageText = 'Debe ingresar un natural mayor o igual a 1'.
 			self assert: cartWithEmptyCatalog isEmpty ].! !
 
-!TusLibrosTests methodsFor: 'Cart tests' stamp: 'f.o. 6/14/2018 01:21:07'!
+!TusLibrosTests methodsFor: 'Cart tests' stamp: 'DS 6/17/2018 13:30:34'!
 test07CanNotAddGreaterQuantityThanStockAtOnce
 	self
 		should: [
 			aCart
 				add: 1
 				quantity: 6 ]
-		raise: Error
+		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			anError messageText = 'No hay tantos productos'.
+			self assert: anError messageText = 'No hay tantos productos'.
 			self assert: cartWithEmptyCatalog isEmpty ].! !
 
 !TusLibrosTests methodsFor: 'Cart tests' stamp: 'f.o. 6/17/2018 10:46:58'!
@@ -95,105 +96,109 @@ test08ACartKnowHowManyElementsHasOfEachElement
 	self assert: (aCart occurrencesOf: 1 ) = 2.
 	self assert: (aCart occurrencesOf: 3 ) = 3.! !
 
-!TusLibrosTests methodsFor: 'Cart tests' stamp: 'f.o. 6/7/2018 18:17:00'!
+!TusLibrosTests methodsFor: 'Cart tests' stamp: 'DS 6/17/2018 13:30:41'!
 test09ACartCantAddThingsThatAreNotInTheCatalog
 	self
 		should: [ cartWithEmptyCatalog add: 1 ]
-		raise: Error
+		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			anError messageText = 'No pertenece al catalogo'.
+			self assert: anError messageText = 'No pertenece al catalogo'.
 			self assert: cartWithEmptyCatalog isEmpty ].! !
 
-!TusLibrosTests methodsFor: 'Cart tests' stamp: 'f.o. 6/14/2018 01:22:02'!
+!TusLibrosTests methodsFor: 'Cart tests' stamp: 'DS 6/17/2018 13:30:45'!
 test10CanNotAddGreaterQuantityThanStock
 	self
 		should: [aCart add: 1 quantity: 2.
 			aCart add: 1 quantity: 7]
-		raise: Error
+		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			anError messageText = 'No hay tantos productos'.
+			self assert: anError messageText = 'No hay tantos productos'.
 			self assert: cartWithEmptyCatalog isEmpty ].! !
 
 
-!TusLibrosTests methodsFor: 'CreditCard tests' stamp: 'DS 6/11/2018 14:59:41'!
-test10CreditCardCantBeCreatedInvalid
+!TusLibrosTests methodsFor: 'CreditCard tests' stamp: 'DS 6/17/2018 13:40:28'!
+test11CreditCardCantBeCreatedInvalid
 	| invalidDate |
-	invalidDate _ GregorianMonthOfYear new
-		initializeYear: Year current previous
-		month: February.
+	invalidDate _ GregorianMonthOfYear year: Year current previous month: February.
 	self
 		should: [
 			CreditCard new
 				withNumber: 123456789
 				withName: 'pepe'
 				withExpirationMonth: invalidDate ]
-		raise: Error
+		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			anError messageText = 'La tarjeta de crédito está vencida' ].! !
+			self assert: anError messageText = 'La tarjeta de crédito está vencida' ].! !
 
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'f.o. 6/17/2018 12:26:27'!
-test01CanNotCheckoutAnEmptyCart! !
-
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'f.o. 6/17/2018 12:26:40'!
-test02CalculatedTotalIsCorrect! !
-
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'f.o. 6/17/2018 12:26:51'!
-test04CheckoutRegistersASale! !
-
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'f.o. 6/17/2018 12:27:20'!
-test06CashierDoesNotSaleWhenTheCreditCardHasNoCredit! !
-
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'f.o. 6/14/2018 02:11:03'!
-test11CashierCantCheckOutWithOutEveryPrice
-
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:31:01'!
+test12CashierCantCheckOutWithOutEveryPrice
 	self
 		should: [
 			cashierWithFewPrices
 				checkout: cartWithElements
 				on: Date today
 				with: validCreditCard ]
-		raise: Error
+		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			anError messageText = 'La lista de precio no incluye todos los elementos del carrito' ].
-! !
+			self assert: anError messageText = 'La lista de precio no incluye todos los elementos del carrito' ]! !
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/11/2018 15:00:13'!
-test12CashierCantCheckOutWithOutdatedCreditCard
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:31:04'!
+test13CashierCantCheckOutWithOutdatedCreditCard
 	self
 		should: [
 			cashierWithFewPrices
 				checkout: cartWithElements
 				on: Date today year next
 				with: validCreditCard ]
-		raise: Error
+		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			anError messageText = 'La tarjeta de crédito está vencida' ].! !
+			self assert: anError messageText = 'La tarjeta de crédito está vencida' ].! !
+
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:29:06'!
+test14CanNotCheckoutAnEmptyCart
+	^self! !
+
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:15:42'!
+test15CalculatedTotalIsCorrect
+	^ self.! !
+
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:15:52'!
+test16CheckoutRegistersASale
+	^ self.! !
+
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:16:03'!
+test17CashierDoesNotSaleWhenTheCreditCardHasNoCredit
+	^ self.! !
 
 
-!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'f.o. 6/14/2018 02:50:58'!
-test01MerchantRecognicesValidCards
-
+!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'DS 6/17/2018 13:17:17'!
+test18MerchantRecognicesValidCards
 	aMerchant isValid: validCreditCard.
 	aMerchant isValid: validCreditCard2.! !
 
-!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'f.o. 6/14/2018 02:51:09'!
-test02MerchantRecognicesInvalidCards
-
-	self should: [aMerchant isValid: invalidCreditCard]
-		raise: Error
+!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'DS 6/17/2018 13:31:13'!
+test19MerchantRecognicesInvalidCards
+	self
+		should: [ aMerchant isValid: invalidCreditCard ]
+		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			anError messageText = 'La tarjeta de crédito provista es inexistente. Revise los datos ingresados.'].! !
+			self assert: anError messageText = 'La tarjeta de crédito provista es inexistente. Revise los datos ingresados.' ].! !
 
-!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'f.o. 6/14/2018 02:58:23'!
-test03MerchantRecognicesWhenCardDontHaveEnoughMoney
-
-	aCart add: 1 quantity: 2.
-	self should: [cashierWithPrices checkout: aCart on: Date today with: validCreditCard2]
-		raise: Error
+!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'DS 6/17/2018 13:31:18'!
+test20MerchantRecognicesWhenCardDontHaveEnoughMoney
+	aCart
+		add: 1
+		quantity: 2.
+	self
+		should: [
+			cashierWithPrices
+				checkout: aCart
+				on: Date today
+				with: validCreditCard2 ]
+		raise: Error - MessageNotUnderstood
 		withExceptionDo: [ :anError |
-			anError messageText = 'El saldo es insuficiente'].
-		! !
+			self assert: anError messageText = 'El saldo es insuficiente' ].! !
 
 
 !classDefinition: #Cart category: #'TusLibros-Ejercicio'!
@@ -365,10 +370,10 @@ Object subclass: #CreditCard
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!CreditCard methodsFor: 'testing' stamp: 'f.o. 6/10/2018 17:16:29'!
+!CreditCard methodsFor: 'testing' stamp: 'DS 6/17/2018 13:44:00'!
 isExpiredOn: aDate 
 	
-	^expirationMonth start < (Month month: aDate monthIndex year: aDate yearNumber) start ! !
+	^expirationMonth start < (Month month: aDate monthIndex year: aDate yearNumber) start! !
 
 
 !CreditCard methodsFor: 'initialization' stamp: 'f.o. 6/10/2018 18:54:18'!
