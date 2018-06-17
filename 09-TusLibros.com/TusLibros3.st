@@ -155,8 +155,8 @@ test13CashierCantCheckOutWithOutdatedCreditCard
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = 'La tarjeta de crédito está vencida' ].! !
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 16:17:00'!
-test14CanNotCheckoutAnEmptyCart
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 16:38:54'!
+test14CashierCanNotCheckoutAnEmptyCart
 	self
 		should: [
 			cashierWithPrices
@@ -167,21 +167,31 @@ test14CanNotCheckoutAnEmptyCart
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = 'El carrito no puede estar vacio' ].! !
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 16:37:40'!
-test15CalculatedTotalIsCorrect
-	|total|
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 16:38:42'!
+test15CashierCalculatesTotalsOnCheckout
+	| total |
 	total _ cashierWithPrices
 		checkout: cartWithElements
 		on: FixedGregorianDate today
 		with: validCreditCard.
-	self assert: total = (2+1)! !
+	self assert: total = (2 + 1).! !
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:15:52'!
-test16CheckoutRegistersASale
-	^ self.! !
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 16:47:41'!
+test16CashierRegistersASaleOnCheckout
+	| total lastSale |
 
-!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 13:16:03'!
-test17CashierDoesNotSaleWhenTheCreditCardHasNoCredit
+	total _ cashierWithPrices
+		checkout: cartWithElements
+		on: FixedGregorianDate today
+		with: validCreditCard.
+		
+	lastSale _ cashierWithPrices salesBook last.
+
+	self assert: (lastSale value = total).
+	self assert: (lastSale owner = validCreditCard cardOwner)! !
+
+!TusLibrosTests methodsFor: 'Cashier tests' stamp: 'DS 6/17/2018 16:39:27'!
+test17CashierDoesNotRegisterSaleWhenTheCreditCardHasNoCredit
 	^ self.! !
 
 
@@ -326,23 +336,26 @@ initializeWithPriceList: aPriceList andMerchant: aMerchantProcessor registeringO
 	salesBook := aSalesBook.! !
 
 
-!Cashier methodsFor: 'checkout' stamp: 'DS 6/17/2018 16:36:08'!
+!Cashier methodsFor: 'checkout' stamp: 'DS 6/17/2018 16:45:38'!
 checkout: aCart on: aDate with: aCreditCard
-
 	| cost |
-	
-	self assertCreditCardIsNotExpired: aCreditCard onDate: aDate .
+	self
+		assertCreditCardIsNotExpired: aCreditCard
+		onDate: aDate.
 	self assertHasPricesForEveryBookIn: aCart.
-	
-	self assert: (aCart isEmpty not)
+	self
+		assert: aCart isEmpty not
 		description: [ self error: 'El carrito no puede estar vacio' ].
-	
-	cost _ (aCart products collect: [:product | priceList at: product]) sum.
-	
-	merchant checkout: aCreditCard withAmount: cost.
-	salesBook add: (Sale ofValue: cost from: aCreditCard cardOwner).
-	
-	^cost! !
+	cost _ (aCart products collect: [ :product |
+		priceList at: product ]) sum.
+	merchant
+		checkout: aCreditCard
+		withAmount: cost.
+	salesBook add:
+		(Sale
+			ofValue: cost
+			from: aCreditCard cardOwner).
+	^ cost.! !
 
 
 !Cashier methodsFor: 'testing' stamp: 'f.o. 6/17/2018 12:30:42'!
@@ -359,6 +372,11 @@ assertHasPricesForEveryBookIn: aCart
 hasPricesForEveryBookIn: aCart
 
 	^(aCart products) allSatisfy: [:product | priceList includesKey: product]! !
+
+
+!Cashier methodsFor: 'accessing' stamp: 'DS 6/17/2018 16:42:27'!
+salesBook
+	^salesBook copy! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -485,7 +503,18 @@ Object subclass: #Sale
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!Sale methodsFor: 'as yet unclassified' stamp: 'f.o. 6/17/2018 11:45:40'!
+!Sale methodsFor: 'inspecting' stamp: 'DS 6/17/2018 16:45:54'!
+owner
+
+	^owner! !
+
+!Sale methodsFor: 'inspecting' stamp: 'DS 6/17/2018 16:45:47'!
+value
+
+	^value! !
+
+
+!Sale methodsFor: 'initializing' stamp: 'f.o. 6/17/2018 11:45:40'!
 registerWithValue: aValue from: aName
 
 	value := aValue.
@@ -497,6 +526,8 @@ registerWithValue: aValue from: aName
 Sale class
 	instanceVariableNames: ''!
 
-!Sale class methodsFor: 'as yet unclassified' stamp: 'f.o. 6/17/2018 11:44:51'!
+!Sale class methodsFor: 'class initialization' stamp: 'DS 6/17/2018 16:45:38'!
 ofValue: aValue from: aName
-	^Sale new registerWithValue: aValue from: aName.! !
+	^ Sale new
+		registerWithValue: aValue
+		from: aName.! !
