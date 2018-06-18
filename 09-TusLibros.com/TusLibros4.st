@@ -1,11 +1,11 @@
 !classDefinition: #TusLibrosTests category: #'TusLibros-Ejercicio'!
 TestCase subclass: #TusLibrosTests
-	instanceVariableNames: 'aCart catalogWithElements emptyCatalog cartWithEmptyCatalog cartWithElements cashierWithFewPrices catalogWithFewerElements validCreditCard invalidCreditCard validCards aMerchant cartWithoutElements cashierWithPrices validCreditCard2 aSalesBook emptyCart cartWithMoreElements'
+	instanceVariableNames: 'aCart catalogWithElements emptyCatalog cartWithEmptyCatalog cartWithElements cashierWithFewPrices catalogWithFewerElements validCreditCard invalidCreditCard validCards aMerchant cartWithoutElements cashierWithPrices validCreditCard2 aSalesBook emptyCart cartWithMoreElements aBook dataLogin merchantRest rest'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!TusLibrosTests methodsFor: 'setup' stamp: 'DS 6/17/2018 16:51:12'!
+!TusLibrosTests methodsFor: 'setup' stamp: 'f.o. 6/18/2018 16:10:12'!
 setUp
 	catalogWithElements _ Dictionary new.
 	catalogWithElements at: 1 put: 2.
@@ -40,7 +40,23 @@ setUp
 	aSalesBook _ OrderedCollection new.
 	
 	cashierWithFewPrices _ Cashier new initializeWithPriceList: catalogWithFewerElements andMerchant: aMerchant registeringOn: aSalesBook.
-	cashierWithPrices _ Cashier new initializeWithPriceList: catalogWithElements andMerchant: aMerchant registeringOn: aSalesBook.! !
+	cashierWithPrices _ Cashier new initializeWithPriceList: catalogWithElements andMerchant: aMerchant registeringOn: aSalesBook.
+	
+	aBook _ OrderedCollection new.
+	dataLogin _ Dictionary new.
+	dataLogin
+		at: 1
+		put: 1.
+	dataLogin
+		at: 2
+		put: 2.
+	merchantRest _ MerchantProcessorSim withBankInfo: validCards .
+	rest _ Rest
+		withCatalog: catalogWithElements
+		withDataLogin: dataLogin
+		withTime: DateAndTime now
+		withMerchant: merchantRest
+		withBook: aBook.! !
 
 
 !TusLibrosTests methodsFor: 'Cart tests' stamp: 'f.o. 6/14/2018 02:50:26'!
@@ -216,6 +232,245 @@ test20MerchantRecognicesWhenCardDontHaveEnoughMoney
 		withExceptionDo: [ :anError |
 			self assert: anError messageText = 'El saldo es insuficiente' ].! !
 
+!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'f.o. 6/18/2018 15:41:27'!
+test21AMerchantCantDebitAnExpiredCard
+	self
+		should: [
+			aMerchant checkout: invalidCreditCard withAmount: 200]
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [ :anError |
+			anError messageText = CreditCard expiredError ].! !
+
+!TusLibrosTests methodsFor: 'Merchant tests' stamp: 'f.o. 6/18/2018 15:43:07'!
+test22AMerchantDebitAValidCard
+	
+	self shouldnt: [aMerchant checkout: validCreditCard withAmount: 1.] 
+	       raise: Error - MessageNotUnderstood ! !
+
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 16:15:26'!
+test23RestLoginAnUserWithCartEmpty
+	| idCart |
+	idCart _ rest
+		createCartWithClientId: 1
+		password: 1.
+	self assert: (rest listCart: idCart) isEmpty.! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 16:15:40'!
+test24RestCantLoginAnUserWithInvalidID
+	self
+		should: [
+			rest
+				createCartWithClientId: 2
+				password: 1 ]
+		raise: Error - MessageNotUnderstood
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = Rest invalidUser.
+			self assert: rest listCarts isEmpty ].
+	self
+		should: [
+			rest
+				listPurchasesId: 2
+				withPassword: 1 ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = Rest invalidUser.
+			self assert: rest listCarts isEmpty ].! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 16:15:51'!
+test25RestCantLoginAnUserWithWrongPassword
+	self
+		should: [
+			rest
+				createCartWithClientId: 1
+				password: 2 ]
+		raise: Error
+		withExceptionDo: [ :anError |
+			self assert: anError messageText = Rest invalidUser.
+			self assert: rest listCarts isEmpty ].! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 16:16:17'!
+test26RestCanAddBookISBNToCart
+	| idCart |
+	idCart _ rest
+		createCartWithClientId: 1
+		password: 1.
+	rest
+		addToCart: idCart
+		isbn: 1
+		withQuantity: 1.
+	self assert: ((rest listCart: idCart) includes: 1).
+	self assert: (rest listCart: idCart) elements = 1.! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 16:21:21'!
+test27RestRaiseErrorWhenISBNIsInvalid
+
+	| idCart  |
+	
+	idCart := rest createCartWithClientId: 1 password: 1.
+	
+	self should: [rest addToCard: idCart isbn: 0 withQuantity: 1.]  
+		raise:  Error
+	 withExceptionDo: [:anError | 
+				anError messageText  = Cart doesNotBelongToCatalog.
+					self assert: (rest listCart: idCart ) elements  = 0.
+		].! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 16:17:07'!
+test28RestRaiseErrorWhenISBNIsNotInCatalog
+
+	| idCart  |
+	
+	idCart := rest createCartWithClientId: 1 password: 1.
+	
+	self should: [rest addToCard: idCart isbn: 10 withQuantity: 1.]  
+		raise:  Error
+	 withExceptionDo: [:anError | 
+				self assert: (anError messageText  = 'No pertenece al catalogo').
+					self assert: (rest listCart: idCart ) elements  = 0.
+		].! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 17:06:02'!
+test29RestCartAreValidWith30minutesTransaction
+
+	| idCart |
+	
+	idCart := rest createCartWithClientId: 1 password: 1.
+	
+	rest time: ((DateAndTime now) + 31 minutes ).
+	
+	self should: [rest addToCard: idCart isbn: 1 withQuantity: 1.]  
+			raise: Error 
+			 withExceptionDo: [:anError |
+				self assert: (anError messageText = Rest timeExpired).
+	]! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 16:35:43'!
+test30RestCheckoutOfElementWithInvalidCardIsNotATransaction
+
+	| idCart  bag |
+	
+	idCart := rest createCartWithClientId: 1 password: 1.
+	
+	rest addToCard: idCart isbn: 1 withQuantity: 1.
+	
+	bag:= Bag new.
+	bag add:1.
+	
+	self should: [rest checkout: idCart withNumberCard: 12345679301 withExpirationDate: FixedGregorianDate today withNameHolder: 'kevin'] 
+				raise: Error  
+				withExceptionDo: [:anError | 
+					self assert: (rest transactions isEmpty).
+					].
+				
+	self should: [rest checkout: idCart withNumberCard: 12345679301 withExpirationDate: (FixedGregorianDate - 60 days) today withNameHolder: 'kevin'] 
+				raise: Error  
+				withExceptionDo: [:anError | 
+					self assert: (rest transactions isEmpty).
+					].
+				
+	self should: [rest checkout: idCart withNumberCard: 12345679301 withExpirationDate: (FixedGregorianDate today) withNameHolder: ''] 
+				raise: Error  
+				withExceptionDo: [:anError | 
+					self assert: (rest transactions isEmpty).
+					].! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 16:36:12'!
+test31RestCheckoutWithInvalidCardIsNotATransactionEver
+
+	| idCart  bag |
+	
+	idCart := rest createCartWithClientId: 1 password: 1.
+	
+	rest addToCard: idCart isbn: 1 withQuantity: 1000.
+	
+	bag:= Bag new.
+	bag add:1.
+	
+	
+	self should: [rest checkout: idCart withNumberCard: 123456789301 withExpirationDate: FixedGregorianDate today withNameHolder: 'kevin'] 
+				raise: Error  
+				withExceptionDo: [:anError | 
+					self assert: (rest transactions isEmpty).
+					].
+			! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 17:01:17'!
+test32RestOnlyKnowCartsRelatedToID
+	
+	self should: [rest listCart: 1 ] 
+			raise: Error 
+		 withExceptionDo: [:anError |
+					self assert: anError messageText = Rest invalidCart.
+			].
+	! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 17:03:28'!
+test33RestCartsFromSameIdAreDifferentCarts
+
+	| idCart  idCart2 |
+	
+	idCart := rest createCartWithClientId: 1 password: 1.
+	idCart2 := rest createCartWithClientId: 1 password: 1.
+	
+	
+	self deny:  (idCart  = idCart2).
+	self deny: ((rest listCart: idCart)  = (rest listCart: idCart2 ))! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 17:03:40'!
+test34ARestCartIsEqualToSelf
+
+	| idCart  |
+	
+	idCart := rest createCartWithClientId: 1 password: 1.	
+	
+	self assert: ((rest listCart: idCart)  = (rest listCart: idCart ))! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 17:06:26'!
+test35RestCartWithTransactionsIsValid
+
+	| idCart |
+	
+	idCart := rest createCartWithClientId: 1 password: 1.
+	
+	rest time: ((DateAndTime now) + 15 minutes ).
+	rest addToCard: idCart isbn: 1 withQuantity: 1.
+	rest time: (rest time + 16 minutes ).	
+	self shouldnt: [rest addToCard: idCart isbn: 1 withQuantity: 1.]  raise: Error
+			! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 17:04:15'!
+test36RestInitializeIDWithoutPurchases
+
+	self assert: (rest listPurchasesId: 1 withPassword: 1) isEmpty .
+
+	! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 17:04:34'!
+test37RestCartsFromDifferentIdAreDifferentCarts
+
+	| idCart  idCart2 |
+	
+	idCart := rest createCartWithClientId: 1 password: 1.
+	idCart2 := rest createCartWithClientId: 2 password: 2.
+	
+	
+	self deny:  (idCart  = idCart2).
+	self deny: ((rest listCart: idCart)  = (rest listCart: idCart2 ))! !
+
+!TusLibrosTests methodsFor: 'Rest tests' stamp: 'f.o. 6/18/2018 17:06:50'!
+test38RestCartInUseIsValid
+
+	| idCart |
+	
+	idCart := rest createCartWithClientId: 1 password: 1.
+	
+	rest time: ((DateAndTime now) + 15 minutes ).
+	rest listCart: idCart .
+	rest time: (rest time + 16 minutes ).	
+	self shouldnt: [rest addToCard: idCart isbn: 1 withQuantity: 1.]  raise: Error
+			! !
+
 
 !classDefinition: #Cart category: #'TusLibros-Ejercicio'!
 Object subclass: #Cart
@@ -235,11 +490,11 @@ withCatalog: anOrderedCollection
 	! !
 
 
-!Cart methodsFor: 'testing' stamp: 'f.o. 6/17/2018 11:57:17'!
+!Cart methodsFor: 'testing' stamp: 'f.o. 6/18/2018 16:21:04'!
 assertIsANaturalNumber: aNumber
 
-	self assert: aNumber isInteger description: [self error: Cart cuantityMustBeNaturalNumber].
-	self assert:  aNumber  > 0 description: [self error: Cart cuantityMustBeNaturalNumber].! !
+	self assert: aNumber isInteger description: [self error: Cart quantityMustBeNaturalNumber].
+	self assert:  aNumber  > 0 description: [self error: Cart quantityMustBeNaturalNumber].! !
 
 !Cart methodsFor: 'testing' stamp: 'f.o. 6/18/2018 02:38:24'!
 assertIsCorrectToAdd: anElement times: aQuantity
@@ -296,10 +551,6 @@ products
 Cart class
 	instanceVariableNames: ''!
 
-!Cart class methodsFor: 'errors' stamp: 'f.o. 6/17/2018 11:51:00'!
-cuantityMustBeNaturalNumber
-	^ 'Debe ingresar un natural mayor o igual a 1'.! !
-
 !Cart class methodsFor: 'errors' stamp: 'f.o. 6/17/2018 11:52:36'!
 doesNotBelongToCatalog
 	^ 'No pertenece al catalogo'.! !
@@ -307,6 +558,10 @@ doesNotBelongToCatalog
 !Cart class methodsFor: 'errors' stamp: 'f.o. 6/17/2018 11:53:29'!
 notSoManyProducts
 	^ 'No hay tantos productos'.! !
+
+!Cart class methodsFor: 'errors' stamp: 'f.o. 6/18/2018 16:20:54'!
+quantityMustBeNaturalNumber
+	^ 'Debe ingresar un natural mayor o igual a 1'.! !
 
 
 !Cart class methodsFor: 'class initialization' stamp: 'f.o. 6/7/2018 03:01:55'!
@@ -383,10 +638,10 @@ priceListError
 	^'La lista de precio no incluye todos los elementos del carrito'.! !
 
 
-!Cashier class methodsFor: 'class initialization' stamp: 'f.o. 6/14/2018 01:31:56'!
-withPriceList: aPriceList andMerchant: aMerchantProcessor
+!Cashier class methodsFor: 'class initialization' stamp: 'f.o. 6/18/2018 16:25:43'!
+withPriceList: aPriceList andMerchant: aMerchantProcessor registeringOn: aSalesBook
 
-	^ self new initializeWithPriceList: aPriceList andMerchant: aMerchantProcessor .! !
+	^ self new initializeWithPriceList: aPriceList andMerchant: aMerchantProcessor registeringOn: aSalesBook.! !
 
 
 !classDefinition: #CreditCard category: #'TusLibros-Ejercicio'!
@@ -396,19 +651,20 @@ Object subclass: #CreditCard
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!CreditCard methodsFor: 'testing' stamp: 'DS 6/17/2018 15:40:36'!
-isExpiredOn: aDate 
-	
-	^expirationMonth firstDate < aDate! !
+!CreditCard methodsFor: 'testing' stamp: 'f.o. 6/18/2018 16:42:45'!
+isExpiredOn: aDate
+
+	^expirationMonth < aDate .
+	! !
 
 
-!CreditCard methodsFor: 'initialization' stamp: 'DS 6/17/2018 15:36:10'!
+!CreditCard methodsFor: 'initialization' stamp: 'f.o. 6/18/2018 16:43:16'!
 withNumber: acardNumber withName: acardHolder withExpirationMonth: amonthOfYear
 
 	cardNumber _ acardNumber.
 	cardHolder _ acardHolder.
 	expirationMonth _ amonthOfYear.
-	self assert: (self isExpiredOn: FixedGregorianDate today) not description: [ self error: CreditCard expiredError ].! !
+	self assert: (self isExpiredOn: GregorianMonthOfYear current) not description: [ self error: CreditCard expiredError ].! !
 
 
 !CreditCard methodsFor: 'accessing' stamp: 'f.o. 6/14/2018 01:59:21'!
@@ -496,7 +752,15 @@ Object subclass: #Rest
 	poolDictionaries: ''
 	category: 'TusLibros-Ejercicio'!
 
-!Rest methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 02:50:09'!
+!Rest methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 16:13:28'!
+addToCard: cartId isbn: isbn withQuantity: aQuantity 
+	
+	| cart |
+	cart:= self listCart: cartId.
+	cart add: isbn quantity: aQuantity .
+	^ true.! !
+
+!Rest methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 16:13:32'!
 addToCart: cartId isbn: isbn withQuantity: aQuantity 
 	
 	| cart |
@@ -504,14 +768,17 @@ addToCart: cartId isbn: isbn withQuantity: aQuantity
 	cart add: isbn quantity: aQuantity .
 	^ true.! !
 
-!Rest methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 03:11:03'!
+!Rest methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 16:46:52'!
 checkout: cartId withNumberCard: numberCard withExpirationDate: anExpirationDate withNameHolder: aNameHolder
 	| aCart aCashier |
 	
 	aCart _ self listCart: cartId.
-	aCashier _ Cashier withPriceList: catalog andMerchant: merchant.
+	aCashier _ Cashier withPriceList: catalog andMerchant: merchant registeringOn: OrderedCollection new.
 	transactions add:
-		(aCashier checkout: aCart withNumberCard: numberCard withExpirationDate: anExpirationDate  withNameHolder: aNameHolder).
+		(
+			aCashier checkout: aCart on: (FixedGregorianDate today) with: 
+			(CreditCard new withNumber: numberCard withName: aNameHolder withExpirationMonth:anExpirationDate)
+		).
 	cartsCheckout add: cartId.
 	^ transactions size.! !
 
@@ -548,6 +815,10 @@ listCart: idCart
 	"[ ^carts at: idCart .] on: Error do: [self error: Rest invalidCart ]."
 	^carts at: idCart ! !
 
+!Rest methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 16:13:03'!
+listCarts
+	^ carts ! !
+
 !Rest methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 02:51:00'!
 listPurchasesId: clientId withPassword: password 
 	self validateUser: clientId withPassword: password.
@@ -561,6 +832,10 @@ time
 !Rest methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 02:45:46'!
 time: aDateAndTime 
 	time := aDateAndTime .! !
+
+!Rest methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 16:52:15'!
+transactions
+	^ transactions! !
 
 !Rest methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 03:13:07'!
 updateTimeCart: idCart 
@@ -588,9 +863,17 @@ invalidUser
 timeExpired
 	^ 'time expired'! !
 
-!Rest class methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 03:02:47'!
-withCatalog: aCatalog withDataLogin: aDictionary withTime: aDate withMerchant: aMerchantProcesorMock withBook: anOrderedCollection 
-	^ self new initializeWithCatalog: aCatalog withDataLogin: aDictionary withTime: aDate withMerchant: aMerchantProcesorMock withBook: anOrderedCollection! !
+!Rest class methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 16:24:27'!
+withCatalog: aCatalog withDataLogin: aDictionary withMerchant: aMerchantProcesor
+	^ self new initializeWithCatalog: aCatalog withDataLogin: aDictionary withTime: (Date today) withMerchant: aMerchantProcesor withBook: OrderedCollection  new.! !
+
+!Rest class methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 16:22:46'!
+withCatalog: aCatalog withDataLogin: aDictionary withTime: aDate withMerchant: aMerchantProcesor
+	^ self new initializeWithCatalog: aCatalog withDataLogin: aDictionary withTime: aDate withMerchant: aMerchantProcesor withBook: OrderedCollection  new.! !
+
+!Rest class methodsFor: 'as yet unclassified' stamp: 'f.o. 6/18/2018 16:23:32'!
+withCatalog: aCatalog withDataLogin: aDictionary withTime: aDate withMerchant: aMerchantProcesor withBook: anOrderedCollection 
+	^ self new initializeWithCatalog: aCatalog withDataLogin: aDictionary withTime: aDate withMerchant: aMerchantProcesor withBook: anOrderedCollection! !
 
 
 !classDefinition: #Sale category: #'TusLibros-Ejercicio'!
